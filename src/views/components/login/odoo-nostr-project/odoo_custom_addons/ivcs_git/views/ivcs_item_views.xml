@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_item_form" model="ir.ui.view">
+        <field name="name">ivcs.item.form</field>
+        <field name="model">ivcs.item</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="sync_repository" string="Sync Repository" type="object" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_create_version_wizard)d" string="Create New Version" type="action" class="oe_highlight"/>
+                    <button name="action_open_add_remote_wizard" string="Add Remote" type="object" class="oe_highlight"/>
+                    <button name="action_create_file" string="Create File" type="object" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_create_branch_wizard)d" string="Create Branch" type="action" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_switch_branch_wizard)d" string="Switch Branch" type="action" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_merge_branches_wizard)d" string="Merge Branches" type="action" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_rebase_branch_wizard)d" string="Rebase Branch" type="action" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="current_version_id"/>
+                        <field name="repo_path"/>
+                        <field name="current_branch"/>
+                    </group>
+                    <notebook>
+                        <page string="Versions">
+                            <field name="version_ids"/>
+                        </page>
+                        <page string="Metadata">
+                            <field name="metadata_ids"/>
+                        </page>
+                        <page string="Commits">
+                            <field name="commit_ids">
+                                <tree>
+                                    <field name="commit_hash"/>
+                                    <field name="message"/>
+                                    <field name="branch"/>
+                                    <field name="timestamp"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ivcs_item" model="ir.actions.act_window">
+        <field name="name">IVCS Items</field>
+        <field name="res_model">ivcs.item</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ivcs" name="IVCS" sequence="10"/>
+    <menuitem id="menu_ivcs_item" name="Items" parent="menu_ivcs" action="action_ivcs_item" sequence="10"/>
+</odoo>

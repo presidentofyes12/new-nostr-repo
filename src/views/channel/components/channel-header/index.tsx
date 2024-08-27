@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import Box from '@mui/material/Box';

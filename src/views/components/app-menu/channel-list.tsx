@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from '@reach/router';
 import { useAtom } from 'jotai';
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 import useTranslation from 'hooks/use-translation';
@@ -243,53 +243,67 @@ const ChannelList = () => {
   const [t] = useTranslation();
   const channels = useLiveChannels();
   const [raven] = useAtom(ravenAtom);
-  const [allProposal, setAllProposal] = useState<any>([]);
-  const [fetchedAllProposal, setFetchedAllProposal] = useState<any>([]);
+  const [allProposal, setAllProposal] = useState<any[]>([]);
+  const [fetchedAllProposal, setFetchedAllProposal] = useState<any[]>([]);
   const [permanentProposalList, setPermanentProposalList] = useState<any[]>([]);
   const [filterType, setfilterType] = useState(PROPOSAL_TYPES.all);
   const [, showMessage] = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const init = async () => {
-      const allProposal = await raven?.fetchAllProposal();
-      console.log('allprops', allProposal);
-      setFetchedAllProposal(allProposal);
-      if (filterType === PROPOSAL_TYPES.all) {
-        setAllProposal(allProposal);
-      } else {
-        filterProposalsByTime();
-      }
-
-      const permanentProposalsArray = [];
-
-      for (const proposal of permanentProposals) {
-        if (!proposalExists(allProposal, proposal.name)) {
-          const newProposal = await raven?.createChannel(proposal);
-          permanentProposalsArray.push(newProposal);
+      try {
+        setIsLoading(true);
+        const allProposal = await raven?.fetchAllProposal();
+        console.log('allprops', allProposal);
+        setFetchedAllProposal(allProposal || []);
+        if (filterType === PROPOSAL_TYPES.all) {
+          setAllProposal(allProposal || []);
         } else {
-          const existingProposal = allProposal?.find((p) => JSON.parse(p.content).name === proposal.name);
-          if (existingProposal) {
-            permanentProposalsArray.push(existingProposal);
+          filterProposalsByTime();
+        }
+
+        const permanentProposalsArray = [];
+
+        for (const proposal of permanentProposals) {
+          if (!proposalExists(allProposal, proposal.name)) {
+            const newProposal = await raven?.createChannel(proposal);
+            if (newProposal) permanentProposalsArray.push(newProposal);
+          } else {
+            const existingProposal = allProposal?.find((p) => {
+              try {
+                return JSON.parse(p.content).name === proposal.name;
+              } catch (e) {
+                console.error('Failed to parse proposal content:', e);
+                return false;
+              }
+            });
+            if (existingProposal) {
+              permanentProposalsArray.push(existingProposal);
+            }
           }
         }
+
+        setPermanentProposalList(permanentProposalsArray);
+
+        console.log('All proposals:', allProposal);
+        console.log('All fetched proposals:', fetchedAllProposal);
+        console.log('Permanent proposals:', permanentProposalsArray);
+      } catch (err) {
+        console.error('Error initializing proposals:', err);
+        setError(err instanceof Error ? err : new Error('An unknown error occurred'));
+      } finally {
+        setIsLoading(false);
       }
-
-      setPermanentProposalList(permanentProposalsArray);
-
-      console.log('All proposals: ' + allProposal);
-      console.log('All fetched proposals: ' + fetchedAllProposal);
-      console.log('Permanent proposals: ' + permanentProposalsArray);
     };
     init();
-  }, [filterType]);
+  }, [filterType, raven]);
 
   useEffect(() => {
     console.log(filterType);
-    const init = async () => {
-      filterProposalsByTime();
-    };
-    init();
-  }, [filterType]);
+    filterProposalsByTime();
+  }, [filterType, fetchedAllProposal]);
 
   function filterProposalsByTime() {
     let filteredProposals = [];
@@ -309,148 +323,66 @@ const ChannelList = () => {
     setAllProposal(filteredProposals);
   }
 
+  if (isLoading) return <CircularProgress />;
+  if (error) return <div>Error: {error.message}</div>;
+
   return (
     <>
+      {/* Proposal History section */}
       <div>
-        <Box
-          sx={{
-            mt: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Box
-            sx={{
-              fontFamily: 'Faktum, sans-serif',
-              fontWeight: 'bold',
-              color: theme.palette.primary.dark,
-            }}
-          >
-            <h3 onClick={async (e) => console.log('p...', channels)}>
-              {t('Proposal History')}
-            </h3>
+        <Box sx={{ mt: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ fontFamily: 'Faktum, sans-serif', fontWeight: 'bold', color: theme.palette.primary.dark }}>
+            <h3 onClick={() => console.log('p...', channels)}>{t('Proposal History')}</h3>
           </Box>
           <ChannelAddMenu />
         </Box>
         <hr />
-        {(() => {
-          if (channels.length === 1) {
-            return (
-              <Box
-                component="span"
-                sx={{
-                  color: theme.palette.primary.dark,
-                  fontSize: '85%',
-                  opacity: '0.6',
-                }}
-              >
-                <h4 className="text-center">
-                  {t('No Proposal Finded')} <CiFileOff />
-                </h4>
-              </Box>
-            );
-          } else {
-            return channels.map((c) => <ChannelListItem key={c.id} c={c} />);
-          }
-        })()}
+        {channels.length <= 1 ? (
+          <Box component="span" sx={{ color: theme.palette.primary.dark, fontSize: '85%', opacity: '0.6' }}>
+            <h4 className="text-center">{t('No Proposal Found')} <CiFileOff /></h4>
+          </Box>
+        ) : (
+          channels.map((c) => <ChannelListItem key={c.id} c={c} />)
+        )}
       </div>
 
+      {/* All Proposals section */}
       <div>
-        <Box
-          sx={{
-            mt: '50px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Box
-            sx={{
-              fontFamily: 'Faktum, sans-serif',
-              fontWeight: 'bold',
-              color: theme.palette.primary.dark,
-            }}
-          >
-            <h3 onClick={(e) => console.log(allProposal)}>
-              {t(`${filterType} Proposal `)}
-            </h3>
+        <Box sx={{ mt: '50px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ fontFamily: 'Faktum, sans-serif', fontWeight: 'bold', color: theme.palette.primary.dark }}>
+            <h3 onClick={() => console.log(allProposal)}>{t(`${filterType} Proposal `)}</h3>
           </Box>
           <FilterProposalDropdown proposalTypeSetter={setfilterType} />
         </Box>
 
-        {(() => {
-          if (!allProposal || allProposal.length === 0) {
-            return (
-              <Box
-                component="span"
-                sx={{
-                  color: theme.palette.primary.dark,
-                  fontSize: '85%',
-                  opacity: '0.6',
-                }}
-              >
-                <h4 className="text-center">
-                  {t('No Proposal Found')} <CiFileOff />
-                </h4>
-              </Box>
-            );
-          } else {
-            return allProposal.map((c: any) => (
-              <>
-                <AllProposalChannelListItem key={c.id} c={c} />
-              </>
-            ));
-          }
-        })()}
+        {!allProposal || allProposal.length === 0 ? (
+          <Box component="span" sx={{ color: theme.palette.primary.dark, fontSize: '85%', opacity: '0.6' }}>
+            <h4 className="text-center">{t('No Proposal Found')} <CiFileOff /></h4>
+          </Box>
+        ) : (
+          allProposal.map((c: any, index: number) => (
+            <AllProposalChannelListItem key={c?.id ?? index} c={c} />
+          ))
+        )}
       </div>
 
+      {/* Permanent Proposals section */}
       <div>
-        <Box
-          sx={{
-            mt: '50px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Box
-            sx={{
-              fontFamily: 'Faktum, sans-serif',
-              fontWeight: 'bold',
-              color: theme.palette.primary.dark,
-            }}
-          >
-            <h3 onClick={(e) => console.log(permanentProposalList)}>
-              {t('Permanent Proposals')}
-            </h3>
+        <Box sx={{ mt: '50px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ fontFamily: 'Faktum, sans-serif', fontWeight: 'bold', color: theme.palette.primary.dark }}>
+            <h3 onClick={() => console.log(permanentProposalList)}>{t('Permanent Proposals')}</h3>
           </Box>
         </Box>
 
-        {(() => {
-          if (!permanentProposalList || permanentProposalList.length === 0) {
-            return (
-              <Box
-                component="span"
-                sx={{
-                  color: theme.palette.primary.dark,
-                  fontSize: '85%',
-                  opacity: '0.6',
-                }}
-              >
-                <h4 className="text-center">
-                  {t('No Permanent Proposal Found')} <CiFileOff />
-                </h4>
-              </Box>
-            );
-          } else {
-            return permanentProposalList.map((c: any) => (
-              <>
-                <AllProposalChannelListItem key={c.id} c={c} />
-              </>
-            ));
-          }
-        })()}
+        {!permanentProposalList || permanentProposalList.length === 0 ? (
+          <Box component="span" sx={{ color: theme.palette.primary.dark, fontSize: '85%', opacity: '0.6' }}>
+            <h4 className="text-center">{t('No Permanent Proposal Found')} <CiFileOff /></h4>
+          </Box>
+        ) : (
+          permanentProposalList.map((c: any, index: number) => (
+            <AllProposalChannelListItem key={c?.id ?? index} c={c} />
+          ))
+        )}
       </div>
     </>
   );

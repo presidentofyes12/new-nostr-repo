@@ -57,6 +57,7 @@ const SettingsPage = (_: RouteComponentProps) => {
 
   const lock = ()=>{
     window.localStorage.setItem("auth", "false")
+    localStorage.setItem('isLocked', 'true');
     window.location.href="/lock"
   }
   return (

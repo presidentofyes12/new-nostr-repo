@@ -1,0 +1,3916 @@
+=== ./allfiles.txt ===
+=== ./nostr_auth/allfiles.txt ===
+=== ./allfiles.txt ===
+=== ./__init__.py ===
+from . import models
+=== ./views/res_users_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_nostr" model="ir.ui.view">
+        <field name="name">res.users.form.nostr</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='access_rights']" position="after">
+                <page string="Nostr Authentication" name="nostr_auth">
+                    <group>
+                        <field name="nostr_public_key"/>
+                        <field name="nostr_relay_url"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./models/res_users.py ===
+# File: odoo_custom_addons/nostr_auth/models/res_users.py
+
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+from nostr.key import PrivateKey, PublicKey
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    nostr_public_key = fields.Char(string='Nostr Public Key')
+    nostr_private_key = fields.Char(string='Nostr Private Key')
+    nostr_relay_url = fields.Char(string='Nostr Relay URL')
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('nostr_private_key'):
+                private_key = PrivateKey()
+                vals['nostr_private_key'] = private_key.bech32()
+                vals['nostr_public_key'] = private_key.public_key.hex()
+        return super(ResUsers, self).create(vals_list)
+
+    @api.constrains('nostr_public_key')
+    def _check_nostr_public_key(self):
+        for user in self:
+            if user.nostr_public_key:
+                try:
+                    PublicKey.from_hex(user.nostr_public_key)
+                except:
+                    raise ValidationError("Invalid Nostr public key format.")
+
+    @api.model
+    def authenticate_nostr(self, public_key, signature, message):
+        user = self.search([('nostr_public_key', '=', public_key)], limit=1)
+        if user:
+            try:
+                pub_key = PublicKey.from_hex(public_key)
+                if pub_key.verify_signed_message_signature(signature, message):
+                    return user.id
+            except:
+                pass
+        return False
+=== ./models/__init__.py ===
+# models/__init__.py
+from . import res_users
+=== ./controllers/main.py ===
+# controllers/main.py
+from odoo import http
+from odoo.http import request
+import json
+
+class NostrAuthController(http.Controller):
+    @http.route('/web/nostr/authenticate', type='json', auth='none')
+    def authenticate(self, public_key, signature, message):
+        uid = request.env['res.users'].sudo().authenticate_nostr(public_key, signature, message)
+        if uid:
+            request.session.authenticate(request.session.db, uid, public_key)
+            return {'success': True, 'uid': uid}
+        return {'success': False, 'error': 'Authentication failed'}
+=== ./controllers/__init__.py ===
+from . import main
+=== ./__manifest__.py ===
+# __manifest__.py
+{
+    'name': 'Nostr Authentication',
+    'version': '1.0',
+    'category': 'Authentication',
+    'summary': 'Extends user model with Nostr fields and authentication',
+    'depends': ['base', 'auth_signup'],
+    'data': [
+        'views/res_users_views.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+}
+=== ./nostr_auth/__init__.py ===
+from . import models
+=== ./nostr_auth/views/res_users_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_nostr" model="ir.ui.view">
+        <field name="name">res.users.form.nostr</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='access_rights']" position="after">
+                <page string="Nostr Authentication" name="nostr_auth">
+                    <group>
+                        <field name="nostr_public_key"/>
+                        <field name="nostr_relay_url"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./nostr_auth/models/res_users.py ===
+# File: odoo_custom_addons/nostr_auth/models/res_users.py
+
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import hashes
+import base64
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    nostr_public_key = fields.Char(string='Nostr Public Key')
+    nostr_private_key = fields.Char(string='Nostr Private Key')
+    nostr_relay_url = fields.Char(string='Nostr Relay URL')
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        nostr_auth = self.env['nostr.auth.module']
+        for vals in vals_list:
+            if not vals.get('nostr_private_key'):
+                keys = nostr_auth.generate_keypair()
+                vals['nostr_private_key'] = keys['private_key']
+                vals['nostr_public_key'] = keys['public_key']
+        return super(ResUsers, self).create(vals_list)
+
+    @api.constrains('nostr_public_key')
+    def _check_nostr_public_key(self):
+        for user in self:
+            if user.nostr_public_key:
+                if not user.nostr_public_key.startswith('npub1'):
+                    raise ValidationError("Invalid Nostr public key format. It should start with 'npub1'.")
+
+    @api.model
+    def authenticate_nostr(self, public_key, signature, message):
+        user = self.search([('nostr_public_key', '=', public_key)], limit=1)
+        if user:
+            nostr_auth = self.env['nostr.auth.module']
+            if nostr_auth.verify_signature(public_key, message, signature):
+                return user.id
+        return False
+=== ./nostr_auth/models/nostr_auth_module.py ===
+# File: odoo_custom_addons/nostr_auth/models/nostr_auth_module.py
+
+from odoo import models, api
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat, PrivateFormat, NoEncryption
+import base64
+from bech32 import bech32_encode, bech32_decode, convertbits
+
+class NostrAuthModule(models.AbstractModel):
+    _name = 'nostr.auth.module'
+    _description = 'Nostr Authentication Module'
+
+    @api.model
+    def generate_keypair(self):
+        private_key = ec.generate_private_key(ec.SECP256K1())
+        public_key = private_key.public_key()
+        
+        private_bytes = private_key.private_numbers().private_value.to_bytes(32, 'big')
+        public_bytes = public_key.public_bytes(
+            encoding=Encoding.X962,
+            format=PublicFormat.UncompressedPoint
+        )[1:]
+        
+        return {
+            'private_key': self.bytes_to_nsec(private_bytes),
+            'public_key': self.bytes_to_npub(public_bytes)
+        }
+
+    @api.model
+    def verify_signature(self, public_key, message, signature):
+        try:
+            public_key_bytes = self.npub_to_bytes(public_key)
+            public_key_obj = ec.EllipticCurvePublicKey.from_encoded_point(ec.SECP256K1(), b'\x04' + public_key_bytes)
+            signature_bytes = base64.b64decode(signature)
+            public_key_obj.verify(
+                signature_bytes,
+                message.encode('utf-8'),
+                ec.ECDSA(hashes.SHA256())
+            )
+            return True
+        except:
+            return False
+
+    @api.model
+    def bytes_to_npub(self, key_bytes):
+        data = convertbits(key_bytes[:32], 8, 5)
+        return bech32_encode('npub', data)
+
+    @api.model
+    def bytes_to_nsec(self, key_bytes):
+        data = convertbits(key_bytes[:32], 8, 5)
+        return bech32_encode('nsec', data)
+        
+    @api.model
+    def npub_to_bytes(self, npub):
+        hrp, data = bech32_decode(npub)
+        return bytes(convertbits(data, 5, 8, False))
+
+    @api.model
+    def nsec_to_bytes(self, nsec):
+        hrp, data = bech32_decode(nsec)
+        return bytes(convertbits(data, 5, 8, False))
+=== ./nostr_auth/models/__init__.py ===
+# File: odoo_custom_addons/nostr_auth/models/__init__.py
+from . import res_users
+from . import nostr_auth_module
+=== ./nostr_auth/controllers/main.py ===
+# controllers/main.py
+from odoo import http
+from odoo.http import request
+import json
+
+class NostrAuthController(http.Controller):
+    @http.route('/web/nostr/authenticate', type='json', auth='none')
+    def authenticate(self, public_key, signature, message):
+        uid = request.env['res.users'].sudo().authenticate_nostr(public_key, signature, message)
+        if uid:
+            request.session.authenticate(request.session.db, uid, public_key)
+            return {'success': True, 'uid': uid}
+        return {'success': False, 'error': 'Authentication failed'}
+=== ./nostr_auth/controllers/__init__.py ===
+from . import main
+=== ./nostr_auth/__manifest__.py ===
+# File: odoo_custom_addons/nostr_auth/__manifest__.py
+{
+    'name': 'Nostr Authentication',
+    'version': '1.0',
+    'category': 'Authentication',
+    'summary': 'Extends user model with Nostr fields and authentication',
+    'depends': ['base', 'auth_signup'],
+    'data': [
+        'views/res_users_views.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+    'external_dependencies': {
+        'python': ['cryptography', 'bech32'],
+    },
+}
+=== ./nostr_auth_test/nostr_auth_module.py ===
+import os
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import hashes
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+import base64
+
+class NostrAuthModule(models.AbstractModel):
+    _name = 'nostr.auth'
+    _description = 'Nostr Authentication Module'
+
+    @api.model
+    def generate_keypair(self):
+        """
+        Generate a new Nostr keypair.
+        This represents the 'Cause' in our 'Causal Relationship'.
+        """
+        private_key = ec.generate_private_key(ec.SECP256K1())
+        public_key = private_key.public_key()
+        
+        private_bytes = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+        public_bytes = public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+        
+        return {
+            'private_key': base64.b64encode(private_bytes).decode('utf-8'),
+            'public_key': base64.b64encode(public_bytes).decode('utf-8')
+        }
+
+    @api.model
+    def store_keys(self, user_id, public_key, private_key):
+        """
+        Store the Nostr keys for a user.
+        This action creates an 'Effect' in our 'Causal Relationship'.
+        """
+        user = self.env['res.users'].browse(user_id)
+        if not user.exists():
+            raise ValidationError("User does not exist")
+        
+        user.write({
+            'nostr_public_key': public_key,
+            'nostr_private_key': private_key  # In a real-world scenario, encrypt this before storage
+        })
+
+    @api.model
+    def verify_signature(self, public_key, message, signature):
+        """
+        Verify a Nostr signature.
+        This verification process is another 'Effect' in our 'Causal Relationship'.
+        """
+        try:
+            public_key_obj = serialization.load_pem_public_key(base64.b64decode(public_key))
+            signature_bytes = base64.b64decode(signature)
+            public_key_obj.verify(
+                signature_bytes,
+                message.encode('utf-8'),
+                ec.ECDSA(hashes.SHA256())
+            )
+            return True
+        except:
+            return False
+
+    @api.model
+    def authenticate_nostr(self, public_key, signature, message):
+        """
+        Authenticate a user using Nostr.
+        This method embodies the complete 'Causal Relationship':
+        The provided credentials (Cause) lead to authentication success or failure (Effect).
+        """
+        user = self.env['res.users'].search([('nostr_public_key', '=', public_key)], limit=1)
+        if user and self.verify_signature(user.nostr_public_key, message, signature):
+            return user.id
+        return False
+
+# For console testing
+if __name__ == "__main__":
+    # Simulate Odoo environment
+    class MockEnv:
+        def __init__(self):
+            self.users = {}
+        
+        def __getitem__(self, key):
+            return self
+        
+        def search(self, domain, limit=None):
+            for user_id, user in self.users.items():
+                if user['nostr_public_key'] == domain[0][2]:
+                    return [MockUser(user_id, user)]
+            return []
+    
+    class MockUser:
+        def __init__(self, id, data):
+            self.id = id
+            self.__dict__.update(data)
+        
+        def exists(self):
+            return True
+        
+        def write(self, vals):
+            self.__dict__.update(vals)
+
+    mock_env = MockEnv()
+    
+    # Create an instance of NostrAuthModule
+    nostr_auth = NostrAuthModule()
+    nostr_auth.env = mock_env
+
+    # Test key generation
+    print("Generating keypair...")
+    keys = nostr_auth.generate_keypair()
+    print(f"Public Key: {keys['public_key'][:32]}...")
+    print(f"Private Key: {keys['private_key'][:32]}...")
+
+    # Test key storage
+    print("\nStoring keys...")
+    mock_env.users[1] = {'name': 'Test User'}
+    try:
+        nostr_auth.store_keys(1, keys['public_key'], keys['private_key'])
+        print("Keys stored successfully")
+    except Exception as e:
+        print(f"Error storing keys: {str(e)}")
+
+    # Test signature verification
+    print("\nTesting signature verification...")
+    message = "Test message"
+    private_key = serialization.load_pem_private_key(base64.b64decode(keys['private_key']), password=None)
+    signature = base64.b64encode(private_key.sign(
+        message.encode('utf-8'),
+        ec.ECDSA(hashes.SHA256())
+    )).decode('utf-8')
+    
+    is_valid = nostr_auth.verify_signature(keys['public_key'], message, signature)
+    print(f"Signature valid: {is_valid}")
+
+    # Test authentication
+    print("\nTesting authentication...")
+    user_id = nostr_auth.authenticate_nostr(keys['public_key'], signature, message)
+    print(f"Authenticated user ID: {user_id}")
+
+    print("\nAll tests completed.")
+=== ./custom_auth/models/res_users.py ===
+from odoo import models, api
+from odoo.exceptions import AccessDenied
+import requests
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    @classmethod
+    def _login(cls, db, login, password):
+        if not cls.validate_external_auth(login, password):
+            raise AccessDenied()
+        return super(ResUsers, cls)._login(db, login, password)
+
+    @classmethod
+    def validate_external_auth(cls, login, token):
+        # Replace with your actual localhost API endpoint
+        validation_url = 'http://localhost/validate_admin'
+        response = requests.post(validation_url, json={'login': login, 'token': token})
+        return response.status_code == 200 and response.json().get('is_admin', False)
+=== ./custom_auth/__manifest__.py ===
+{
+    'name': 'Custom External Authentication',
+    'version': '1.0',
+    'category': 'Hidden',
+    'summary': 'Custom authentication for external admin access',
+    'depends': ['base'],
+    'data': [],
+    'installable': True,
+}
+=== ./nostr_bridge/allfiles.txt ===
+=== ./allfiles.txt ===
+=== ./static/src/js/nostr_client.js ===
+odoo.define('nostr_bridge.NostrClient', function (require) {
+    "use strict";
+
+    var Class = require('web.Class');
+
+    var NostrClient = Class.extend({
+        init: function (relayUrls) {
+            this.relayUrls = relayUrls;
+            this.relayPool = new NostrTools.RelayPool(this.relayUrls);
+        },
+
+        subscribe: function (filters, callback) {
+            this.relayPool.subscribe(filters, callback);
+        },
+
+        publish: function (event) {
+            this.relayPool.publish(event);
+        }
+    });
+
+    return NostrClient;
+});
+=== ./__init__.py ===
+from . import models
+from . import controllers
+=== ./views/res_users_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_nostr" model="ir.ui.view">
+        <field name="name">res.users.form.nostr</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Nostr Settings" name="nostr_settings">
+                    <group>
+                        <field name="nostr_public_key"/>
+                        <field name="nostr_private_key" password="True"/>
+                        <field name="nostr_relay_url"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./views/res_config_settings_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_nostr" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.nostr</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Nostr Bridge" string="Nostr Bridge" data-key="nostr_bridge">
+                    <h2>Nostr Settings</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Nostr Relay URLs</span>
+                                <div class="text-muted">
+                                    Comma-separated list of Nostr relay URLs
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="nostr_relay_urls" class="o_light_label"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./views/templates.xml ===
+<odoo>
+    <template id="assets_backend" name="nostr_bridge assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/nostr_bridge/static/src/js/nostr_client.js"/>
+        </xpath>
+    </template>
+</odoo>
+=== ./views/res_partner_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_nostr" model="ir.ui.view">
+        <field name="name">res.partner.form.nostr</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Nostr Settings" name="nostr_settings">
+                    <group>
+                        <field name="nostr_public_key"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./data/ir_cron_data.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_migrate_messages_to_nostr" model="ir.cron">
+            <field name="name">Migrate Messages to Nostr</field>
+            <field name="model_id" ref="model_mail_message"/>
+            <field name="state">code</field>
+            <field name="code">model.migrate_messages_to_nostr()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">1</field>
+            <field name="doall" eval="False"/>
+        </record>
+    </data>
+</odoo>
+=== ./models/res_config_settings.py ===
+import requests
+import json
+from odoo import fields, models, api
+import logging
+
+_logger = logging.getLogger(__name__)
+
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
+
+    def _default_nostr_relays(self):
+        return self._get_top_nostr_relays()
+
+    @api.model
+    def _get_top_nostr_relays(self, limit=108):
+        url = "https://api.nostr.watch/v1/online"
+        try:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            _logger.info(f"Response status code: {response.status_code}")
+            
+            data = response.json()
+            #_logger.info(f"API response (first 108 items): {json.dumps(data)[:1000]}")
+            _logger.info(f"API response (first 108 items): {data[:108]}")
+            
+            relays = data[:108]
+            _logger.info(f"Number of relay links found: {len(relays)}")
+            _logger.info(f"Extracted relays (first 5): {relays[:5]}")
+            
+            relay_urls = ",".join(relays)
+            return relay_urls
+        except requests.RequestException as e:
+            _logger.error(f"Error fetching Nostr relays: {e}")
+            return "wss://nostr-relay.app,wss://nos.lol,wss://relay.snort.social,wss://relay.nostr.net"
+
+    nostr_relay_urls = fields.Char(
+        string="Nostr Relay URLs", 
+        config_parameter='nostr_bridge.relay_urls',
+        default=_default_nostr_relays
+    )
+
+    @api.model
+    def get_values(self):
+        res = super(ResConfigSettings, self).get_values()
+        ICPSudo = self.env['ir.config_parameter'].sudo()
+        
+        relay_urls = ICPSudo.get_param('nostr_bridge.relay_urls')
+        if not relay_urls:
+            relay_urls = self._get_top_nostr_relays()
+            ICPSudo.set_param('nostr_bridge.relay_urls', relay_urls)
+            _logger.info(f"Set new relay URLs: {relay_urls[:100]}...")  # Log first 100 characters
+        else:
+            _logger.info(f"Using existing relay URLs: {relay_urls[:100]}...")  # Log first 100 characters
+        
+        res.update(nostr_relay_urls=relay_urls)
+        return res
+
+    def set_values(self):
+        super(ResConfigSettings, self).set_values()
+        ICPSudo = self.env['ir.config_parameter'].sudo()
+        if self.nostr_relay_urls:
+            ICPSudo.set_param('nostr_bridge.relay_urls', self.nostr_relay_urls)
+            _logger.info(f"Updated relay URLs: {self.nostr_relay_urls[:100]}...")  # Log first 100 characters
+        else:
+            default_urls = self._get_top_nostr_relays()
+            ICPSudo.set_param('nostr_bridge.relay_urls', default_urls)
+            _logger.info(f"Set default relay URLs: {default_urls[:100]}...")  # Log first 100 characters
+=== ./models/res_users.py ===
+"""from odoo import models, fields, api
+from nostr.key import PrivateKey
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    #nostr_private_key = fields.Char(string="Nostr Private Key")
+    #nostr_public_key = fields.Char(string="Nostr Public Key", compute='_compute_public_key')
+    #nostr_relay_url = fields.Char(string="Nostr Relay URL")
+
+    nostr_public_key = fields.Char(string="Nostr Public Key")
+    nostr_private_key = fields.Char(string="Nostr Private Key")
+    nostr_relay_url = fields.Char(string="Nostr Relay URL")
+
+    @api.model
+    def create(self, vals):
+        if not vals.get('nostr_private_key'):
+            private_key = PrivateKey()
+            vals['nostr_private_key'] = private_key.bech32()
+        return super(ResUsers, self).create(vals)
+
+    def write(self, vals):
+        # Here you might want to handle updates to Nostr fields
+        return super(ResUsers, self).write(vals)
+
+    @api.depends('nostr_private_key')
+    def _compute_public_key(self):
+        for user in self:
+            if user.nostr_private_key:
+                private_key = PrivateKey.from_nsec(user.nostr_private_key)
+                user.nostr_public_key = private_key.public_key.bech32()
+            else:
+                user.nostr_public_key = False
+"""
+
+"""from odoo import models, fields, api
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    nostr_public_key = fields.Char(string="Nostr Public Key")
+    nostr_private_key = fields.Char(string="Nostr Private Key")
+    nostr_relay_url = fields.Char(string="Nostr Relay URL")
+
+    @api.model
+    def create(self, vals):
+        # Here you might want to generate Nostr keys if they're not provided
+        return super(ResUsers, self).create(vals)
+
+    def write(self, vals):
+        # Here you might want to handle updates to Nostr fields
+        return super(ResUsers, self).write(vals)"""
+        
+        
+from odoo import models, fields
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    nostr_public_key = fields.Char(string="Nostr Public Key")
+    nostr_private_key = fields.Char(string="Nostr Private Key")
+    nostr_relay_url = fields.Char(string="Nostr Relay URL")
+=== ./models/mail_message.py ===
+from odoo import models, api
+import logging
+
+_logger = logging.getLogger(__name__)
+
+class MailMessage(models.Model):
+    _inherit = 'mail.message'
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        _logger.info("Creating new mail messages")
+        messages = super(MailMessage, self).create(vals_list)
+        for message in messages:
+            self._publish_to_nostr(message)
+        return messages
+
+    def _publish_to_nostr(self, message):
+        try:
+            nostr_adapter = self.env['nostr.adapter'].sudo()
+            event_data = {
+                'kind': 1,  # Text note
+                'content': message.body,
+                'tags': [
+                    ['e', str(message.parent_id.id)] if message.parent_id else [],
+                    ['p', message.author_id.nostr_public_key] if message.author_id and message.author_id.nostr_public_key else [],
+                    ['client', 'Odoo Nostr Bridge'],
+                ],
+            }
+            result = nostr_adapter.publish_event(event_data)
+            if result:
+                _logger.info(f"Successfully published message {message.id} to Nostr")
+            else:
+                _logger.warning(f"Failed to publish message {message.id} to Nostr")
+        except Exception as e:
+            _logger.exception(f"Error publishing message {message.id} to Nostr: {str(e)}")
+=== ./models/nostr_adapter.py ===
+import requests
+import websocket
+from odoo import models, api
+from websocket._exceptions import WebSocketConnectionClosedException
+from odoo.exceptions import UserError
+from nostr.event import Event
+from nostr.key import PrivateKey
+from nostr.relay_manager import RelayManager
+import logging
+import time
+
+_logger = logging.getLogger(__name__)
+
+class NostrAdapter(models.AbstractModel):
+    _name = 'nostr.adapter'
+    _description = 'Nostr Adapter'
+
+    @api.model
+    def get_relay_manager(self):
+        ICPSudo = self.env['ir.config_parameter'].sudo()
+        relay_urls = ICPSudo.get_param('nostr_bridge.relay_urls', '').split(',')
+        if not relay_urls:
+            raise UserError("Nostr relay URL is not configured. Please set it in the settings.")
+        _logger.info(f"Nostr relay URLs: {relay_urls}")
+
+        relay_manager = RelayManager()
+        for url in relay_urls:
+            url = url.strip()
+            if url:  # Only add non-empty URLs
+                _logger.info(f"Adding relay: {url}")
+                relay_manager.add_relay(url)
+        return relay_manager
+
+    @api.model
+    def publish_event(self, event_data, max_retries=3, retry_delay=1):
+        for attempt in range(max_retries):
+            try:
+                private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+                public_key = private_key.public_key.hex()
+                
+                event = Event(
+                    kind=event_data['kind'],
+                    content=event_data['content'],
+                    tags=event_data.get('tags', []),
+                    public_key=public_key
+                )
+                private_key.sign_event(event)
+                
+                relay_manager = self.get_relay_manager()
+                relay_manager.open_connections({"write": True})
+                time.sleep(1)  # Give some time for connections to establish
+                
+                publish_result = relay_manager.publish_event(event)
+                _logger.info(f"Relay publish response: {publish_result}")
+    
+                relay_manager.close_connections()
+                return True
+            except Exception as e:
+                _logger.exception(f"Error publishing event to Nostr: {str(e)}")
+                time.sleep(retry_delay)
+        
+        _logger.error("Failed to publish event after multiple attempts")
+        return False
+=== ./models/__init__.py ===
+from . import res_users
+from . import mail_message
+from . import nostr_adapter
+from . import res_config_settings
+from . import res_partner
+=== ./models/res_partner.py ===
+from odoo import models, fields
+
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    nostr_public_key = fields.Char(string="Nostr Public Key")
+=== ./models/nostr_event_handler.py ===
+import json
+from odoo import api, models
+
+class NostrEventHandler(models.AbstractModel):
+    _name = 'nostr.event.handler'
+    _description = 'Nostr Event Handler'
+
+    @api.model
+    def handle_event(self, event):
+        content = json.loads(event.content)
+        if event.kind == 1:  # Text note
+            self._handle_message(content)
+        elif event.kind == 7:  # Reaction
+            self._handle_reaction(content)
+
+    def _handle_message(self, content):
+        self.env['mail.message'].create({
+            'body': content['body'],
+            'author_id': self._get_author_id(content['author']),
+            'model': content['channel'],
+            'res_id': content['res_id'],
+        })
+
+    def _handle_reaction(self, content):
+        # Implement reaction handling (e.g., likes, emojis)
+        pass
+
+    def _get_author_id(self, author_name):
+        partner = self.env['res.partner'].search([('name', '=', author_name)], limit=1)
+        if not partner:
+            partner = self.env['res.partner'].create({'name': author_name})
+        return partner.id
+=== ./controllers/main.py ===
+from odoo import http
+from odoo.http import request
+import json
+from nostr.event import Event
+from nostr.key import PrivateKey
+
+class NostrController(http.Controller):
+
+    @http.route('/nostr/authenticate', type='json', auth='public')
+    def authenticate(self, public_key, signature, message):
+        User = request.env['res.users'].sudo()
+        user_id = User.authenticate_nostr(public_key, signature, message)
+        if user_id:
+            request.session.authenticate(request.db, user_id, public_key)
+            return {'success': True, 'uid': user_id}
+        return {'success': False, 'error': 'Authentication failed'}
+
+    @http.route('/nostr/publish', type='json', auth='user')
+    def publish_event(self, event_data):
+        nostr_adapter = request.env['nostr.adapter'].sudo().get_adapter()
+        try:
+            nostr_adapter.publish_event(event_data)
+            return {'success': True}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/nostr/subscribe', type='json', auth='user')
+    def subscribe_to_events(self, filters):
+        nostr_adapter = request.env['nostr.adapter'].sudo().get_adapter()
+        try:
+            def callback(event):
+                # Process the event, e.g., create a message in Odoo
+                request.env['nostr.event.handler'].sudo().handle_event(event)
+
+            nostr_adapter.subscribe_to_events(filters, callback)
+            return {'success': True}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/nostr/get_public_key', type='json', auth='user')
+    def get_public_key(self):
+        user = request.env.user
+        return {'public_key': user.nostr_public_key}
+
+    @http.route('/nostr/create_event', type='json', auth='user')
+    def create_event(self, kind, content, tags=None):
+        user = request.env.user
+        private_key = PrivateKey.from_nsec(user.nostr_private_key)
+        event = Event(kind=kind, content=json.dumps(content), tags=tags or [])
+        event.sign(private_key.hex())
+        return {
+            'id': event.id,
+            'pubkey': event.public_key,
+            'created_at': event.created_at,
+            'kind': event.kind,
+            'tags': event.tags,
+            'content': event.content,
+            'sig': event.signature,
+        }
+=== ./controllers/__init__.py ===
+from . import main
+=== ./__manifest__.py ===
+{
+    'name': 'Nostr Bridge',
+    'version': '1.0',
+    'category': 'Social',
+    'summary': 'Bridge between Odoo messages and Nostr network',
+    'depends': ['base', 'mail', 'web'],
+    'data': [
+        'views/res_config_settings_views.xml',
+        'views/res_users_views.xml',
+        'views/res_partner_views.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+    'license': 'LGPL-3',
+}
+=== ./nostr_bridge/static/src/js/nostr_client.js ===
+odoo.define('nostr_bridge.NostrClient', function (require) {
+    "use strict";
+
+    var Class = require('web.Class');
+
+    var NostrClient = Class.extend({
+        init: function (relayUrls) {
+            this.relayUrls = relayUrls;
+            this.relayPool = new NostrTools.RelayPool(this.relayUrls);
+        },
+
+        subscribe: function (filters, callback) {
+            this.relayPool.subscribe(filters, callback);
+        },
+
+        publish: function (event) {
+            this.relayPool.publish(event);
+        }
+    });
+
+    return NostrClient;
+});
+=== ./nostr_bridge/security/ir.model.access.csv ===
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_git_repository_user,git.repository.user,model_git_repository,base.group_user,1,1,1,1
+=== ./nostr_bridge/__init__.py ===
+from . import models
+from . import controllers
+=== ./nostr_bridge/views/res_users_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_nostr" model="ir.ui.view">
+        <field name="name">res.users.form.nostr</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Nostr Settings" name="nostr_settings">
+                    <group>
+                        <field name="nostr_public_key"/>
+                        <field name="nostr_private_key" password="True"/>
+                        <field name="nostr_relay_url"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./nostr_bridge/views/res_config_settings_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_nostr" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.nostr</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Nostr Bridge" string="Nostr Bridge" data-key="nostr_bridge">
+                    <h2>Nostr Settings</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Nostr Relay URLs</span>
+                                <div class="text-muted">
+                                    Comma-separated list of Nostr relay URLs
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="nostr_relay_urls" class="o_light_label"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./nostr_bridge/views/templates.xml ===
+<odoo>
+    <template id="assets_backend" name="nostr_bridge assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/nostr_bridge/static/src/js/nostr_client.js"/>
+        </xpath>
+    </template>
+</odoo>
+=== ./nostr_bridge/views/git_repository_views.xml ===
+<!-- File: odoo_custom_addons/nostr_bridge/views/git_repository_views.xml -->
+
+<odoo>
+    <record id="view_git_repository_form" model="ir.ui.view">
+        <field name="name">git.repository.form</field>
+        <field name="model">git.repository</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="path"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_git_repository" model="ir.actions.act_window">
+        <field name="name">Git Repositories</field>
+        <field name="res_model">git.repository</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_git_repository" name="Git Repositories" action="action_git_repository" parent="base.menu_custom"/>
+</odoo>
+=== ./nostr_bridge/views/res_partner_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_nostr" model="ir.ui.view">
+        <field name="name">res.partner.form.nostr</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Nostr Settings" name="nostr_settings">
+                    <group>
+                        <field name="nostr_public_key"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./nostr_bridge/data/ir_cron_data.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_migrate_messages_to_nostr" model="ir.cron">
+            <field name="name">Migrate Messages to Nostr</field>
+            <field name="model_id" ref="model_mail_message"/>
+            <field name="state">code</field>
+            <field name="code">model.migrate_messages_to_nostr()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">1</field>
+            <field name="doall" eval="False"/>
+        </record>
+    </data>
+</odoo>
+=== ./nostr_bridge/models/git_repository.py ===
+# File: odoo_custom_addons/nostr_bridge/models/git_repository.py
+
+from odoo import models, fields, api
+import git
+import os
+
+class GitRepository(models.Model):
+    _name = 'git.repository'
+    _description = 'Git Repository'
+
+    name = fields.Char(string='Repository Name', required=True)
+    path = fields.Char(string='Repository Path', required=True)
+    
+    @api.model
+    def create(self, vals):
+        repo = super(GitRepository, self).create(vals)
+        if not os.path.exists(repo.path):
+            os.makedirs(repo.path)
+            git.Repo.init(repo.path)
+        return repo
+
+    def commit_changes(self, message):
+        repo = git.Repo(self.path)
+        repo.git.add(A=True)
+        commit = repo.index.commit(message)
+        
+        event_manager = self.env['nostr.event.manager']
+        event = event_manager.create_git_event(self.path, commit.hexsha)
+        event_manager.publish_event(event)
+        
+        return commit.hexsha
+=== ./nostr_bridge/models/res_config_settings.py ===
+import requests
+import json
+from odoo import fields, models, api
+import logging
+
+_logger = logging.getLogger(__name__)
+
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
+
+    def _default_nostr_relays(self):
+        return self._get_top_nostr_relays()
+
+    @api.model
+    def _get_top_nostr_relays(self, limit=108):
+        url = "https://api.nostr.watch/v1/online"
+        try:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            _logger.info(f"Response status code: {response.status_code}")
+            
+            data = response.json()
+            #_logger.info(f"API response (first 108 items): {json.dumps(data)[:1000]}")
+            _logger.info(f"API response (first 108 items): {data[:108]}")
+            
+            relays = data[:108]
+            _logger.info(f"Number of relay links found: {len(relays)}")
+            _logger.info(f"Extracted relays (first 5): {relays[:5]}")
+            
+            relay_urls = ",".join(relays)
+            return relay_urls
+        except requests.RequestException as e:
+            _logger.error(f"Error fetching Nostr relays: {e}")
+            return "wss://nostr-relay.app,wss://nos.lol,wss://relay.snort.social,wss://relay.nostr.net"
+
+    nostr_relay_urls = fields.Char(
+        string="Nostr Relay URLs", 
+        config_parameter='nostr_bridge.relay_urls',
+        default=_default_nostr_relays
+    )
+
+    @api.model
+    def get_values(self):
+        res = super(ResConfigSettings, self).get_values()
+        ICPSudo = self.env['ir.config_parameter'].sudo()
+        
+        relay_urls = ICPSudo.get_param('nostr_bridge.relay_urls')
+        if not relay_urls:
+            relay_urls = self._get_top_nostr_relays()
+            ICPSudo.set_param('nostr_bridge.relay_urls', relay_urls)
+            _logger.info(f"Set new relay URLs: {relay_urls[:100]}...")  # Log first 100 characters
+        else:
+            _logger.info(f"Using existing relay URLs: {relay_urls[:100]}...")  # Log first 100 characters
+        
+        res.update(nostr_relay_urls=relay_urls)
+        return res
+
+    def set_values(self):
+        super(ResConfigSettings, self).set_values()
+        ICPSudo = self.env['ir.config_parameter'].sudo()
+        if self.nostr_relay_urls:
+            ICPSudo.set_param('nostr_bridge.relay_urls', self.nostr_relay_urls)
+            _logger.info(f"Updated relay URLs: {self.nostr_relay_urls[:100]}...")  # Log first 100 characters
+        else:
+            default_urls = self._get_top_nostr_relays()
+            ICPSudo.set_param('nostr_bridge.relay_urls', default_urls)
+            _logger.info(f"Set default relay URLs: {default_urls[:100]}...")  # Log first 100 characters
+=== ./nostr_bridge/models/res_users.py ===
+"""from odoo import models, fields, api
+from nostr.key import PrivateKey
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    #nostr_private_key = fields.Char(string="Nostr Private Key")
+    #nostr_public_key = fields.Char(string="Nostr Public Key", compute='_compute_public_key')
+    #nostr_relay_url = fields.Char(string="Nostr Relay URL")
+
+    nostr_public_key = fields.Char(string="Nostr Public Key")
+    nostr_private_key = fields.Char(string="Nostr Private Key")
+    nostr_relay_url = fields.Char(string="Nostr Relay URL")
+
+    @api.model
+    def create(self, vals):
+        if not vals.get('nostr_private_key'):
+            private_key = PrivateKey()
+            vals['nostr_private_key'] = private_key.bech32()
+        return super(ResUsers, self).create(vals)
+
+    def write(self, vals):
+        # Here you might want to handle updates to Nostr fields
+        return super(ResUsers, self).write(vals)
+
+    @api.depends('nostr_private_key')
+    def _compute_public_key(self):
+        for user in self:
+            if user.nostr_private_key:
+                private_key = PrivateKey.from_nsec(user.nostr_private_key)
+                user.nostr_public_key = private_key.public_key.bech32()
+            else:
+                user.nostr_public_key = False
+"""
+
+"""from odoo import models, fields, api
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    nostr_public_key = fields.Char(string="Nostr Public Key")
+    nostr_private_key = fields.Char(string="Nostr Private Key")
+    nostr_relay_url = fields.Char(string="Nostr Relay URL")
+
+    @api.model
+    def create(self, vals):
+        # Here you might want to generate Nostr keys if they're not provided
+        return super(ResUsers, self).create(vals)
+
+    def write(self, vals):
+        # Here you might want to handle updates to Nostr fields
+        return super(ResUsers, self).write(vals)"""
+        
+        
+from odoo import models, fields
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    nostr_public_key = fields.Char(string="Nostr Public Key")
+    nostr_private_key = fields.Char(string="Nostr Private Key")
+    nostr_relay_url = fields.Char(string="Nostr Relay URL")
+=== ./nostr_bridge/models/nostr_event_manager.py ===
+# File: odoo_custom_addons/nostr_bridge/models/nostr_event_manager.py
+
+from odoo import models, fields, api
+import json
+import time
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+import git
+import os
+import logging
+
+_logger = logging.getLogger(__name__)
+
+class NostrEventManager(models.AbstractModel):
+    _name = 'nostr.event.manager'
+    _description = 'Nostr Event Manager'
+
+    @api.model
+    def create_event(self, content, tags, private_key):
+        pubkey = self.get_public_key(private_key)
+        created_at = int(time.time())
+        event_data = {
+            "kind": 3120,
+            "pubkey": pubkey,
+            "created_at": created_at,
+            "tags": tags,
+            "content": json.dumps(content)
+        }
+        event_id = self.calculate_event_id(event_data)
+        event_data["id"] = event_id
+        event_data["sig"] = self.sign_event(event_data, private_key)
+        _logger.info(event_data)
+        return event_data
+
+    @api.model
+    def get_public_key(self, private_key):
+        private_key_obj = ec.derive_private_key(int(private_key, 16), ec.SECP256K1())
+        public_key = private_key_obj.public_key()
+        return public_key.public_bytes(
+            encoding=Encoding.X962,
+            format=PublicFormat.UncompressedPoint
+        )[1:].hex()
+
+    @api.model
+    def calculate_event_id(self, event_data):
+        serialized = json.dumps([
+            0,
+            event_data['pubkey'],
+            event_data['created_at'],
+            event_data['kind'],
+            event_data['tags'],
+            event_data['content']
+        ], separators=(',', ':'))
+        return self.sha256(serialized)
+
+    @api.model
+    def sign_event(self, event_data, private_key):
+        private_key_obj = ec.derive_private_key(int(private_key, 16), ec.SECP256K1())
+        signature = private_key_obj.sign(
+            bytes.fromhex(event_data['id']),
+            ec.ECDSA(hashes.SHA256())
+        )
+        return signature.hex()
+
+    @api.model
+    def sha256(self, data):
+        digest = hashes.Hash(hashes.SHA256())
+        digest.update(data.encode())
+        return digest.finalize().hex()
+
+    @api.model
+    def create_git_event(self, repo_path, commit_hash):
+        repo = git.Repo(repo_path)
+        commit = repo.commit(commit_hash)
+        
+        content = {
+            "action": "commit",
+            "message": commit.message,
+            "author": commit.author.name,
+            "email": commit.author.email,
+            "date": commit.authored_datetime.isoformat()
+        }
+        
+        tags = [
+            ["t", "commit"],
+            ["h", commit_hash],
+            ["n", repo.active_branch.name],
+            ["m", commit.author.name],
+            ["v", "1.0"],  # You might want to implement versioning
+            ["r", repo.remotes.origin.url if repo.remotes else ""],
+            ["p", self.get_public_key(self.env.user.nostr_private_key)],
+            ["d", commit.message],
+            ["s", "success"]
+        ]
+        
+        return self.create_event(content, tags, self.env.user.nostr_private_key)
+
+    @api.model
+    def publish_event(self, event):
+        nostr_adapter = self.env['nostr.adapter']
+        return nostr_adapter.publish_event(event)
+
+    @api.model
+    def get_events(self, filters=None):
+        nostr_adapter = self.env['nostr.adapter']
+        return nostr_adapter.get_events(filters)
+=== ./nostr_bridge/models/mail_message.py ===
+from odoo import models, api
+import logging
+
+_logger = logging.getLogger(__name__)
+
+class MailMessage(models.Model):
+    _inherit = 'mail.message'
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        _logger.info("Creating new mail messages")
+        messages = super(MailMessage, self).create(vals_list)
+        for message in messages:
+            self._publish_to_nostr(message)
+        return messages
+
+    def _publish_to_nostr(self, message):
+        try:
+            nostr_adapter = self.env['nostr.adapter'].sudo()
+            event_data = {
+                'kind': 1,  # Text note
+                'content': message.body,
+                'tags': [
+                    ['e', str(message.parent_id.id)] if message.parent_id else [],
+                    ['p', message.author_id.nostr_public_key] if message.author_id and message.author_id.nostr_public_key else [],
+                    ['client', 'Odoo Nostr Bridge'],
+                ],
+            }
+            result = nostr_adapter.publish_event(event_data)
+            if result:
+                _logger.info(f"Successfully published message {message.id} to Nostr")
+            else:
+                _logger.warning(f"Failed to publish message {message.id} to Nostr")
+        except Exception as e:
+            _logger.exception(f"Error publishing message {message.id} to Nostr: {str(e)}")
+=== ./nostr_bridge/models/nostr_adapter.py ===
+import requests
+import websocket
+from odoo import models, api
+from websocket._exceptions import WebSocketConnectionClosedException
+from odoo.exceptions import UserError
+from nostr.event import Event
+from nostr.key import PrivateKey
+from nostr.relay_manager import RelayManager
+import logging
+import time
+
+_logger = logging.getLogger(__name__)
+
+class NostrAdapter(models.AbstractModel):
+    _name = 'nostr.adapter'
+    _description = 'Nostr Adapter'
+
+    @api.model
+    def get_relay_manager(self):
+        ICPSudo = self.env['ir.config_parameter'].sudo()
+        relay_urls = ICPSudo.get_param('nostr_bridge.relay_urls', '').split(',')
+        if not relay_urls:
+            raise UserError("Nostr relay URL is not configured. Please set it in the settings.")
+        _logger.info(f"Nostr relay URLs: {relay_urls}")
+
+        relay_manager = RelayManager()
+        for url in relay_urls:
+            url = url.strip()
+            if url:  # Only add non-empty URLs
+                _logger.info(f"Adding relay: {url}")
+                relay_manager.add_relay(url)
+        return relay_manager
+
+    @api.model
+    def publish_event(self, event_data, max_retries=3, retry_delay=1):
+        for attempt in range(max_retries):
+            try:
+                private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+                public_key = private_key.public_key.hex()
+                
+                event = Event(
+                    kind=event_data['kind'],
+                    content=event_data['content'],
+                    tags=event_data.get('tags', []),
+                    public_key=public_key
+                )
+                private_key.sign_event(event)
+                
+                relay_manager = self.get_relay_manager()
+                relay_manager.open_connections({"write": True})
+                time.sleep(1)  # Give some time for connections to establish
+                
+                publish_result = relay_manager.publish_event(event)
+                _logger.info(f"Relay publish response: {publish_result}")
+    
+                relay_manager.close_connections()
+                return True
+            except Exception as e:
+                _logger.exception(f"Error publishing event to Nostr: {str(e)}")
+                time.sleep(retry_delay)
+        
+        _logger.error("Failed to publish event after multiple attempts")
+        return False
+=== ./nostr_bridge/models/__init__.py ===
+# File: odoo_custom_addons/nostr_bridge/models/__init__.py
+
+from . import res_users
+from . import mail_message
+from . import nostr_adapter
+from . import res_config_settings
+from . import res_partner
+from . import nostr_event_manager
+from . import git_repository
+=== ./nostr_bridge/models/res_partner.py ===
+from odoo import models, fields
+
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    nostr_public_key = fields.Char(string="Nostr Public Key")
+=== ./nostr_bridge/models/ivcs_item.py ===
+# File: odoo_custom_addons/nostr_bridge/models/ivcs_item.py
+
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
+import git
+import os
+import logging
+from nostr.key import PrivateKey
+
+_logger = logging.getLogger(__name__)
+
+class IVCSItem(models.Model):
+    _inherit = 'ivcs.item'
+
+    nostr_private_key = fields.Char(string="Nostr Private Key")
+
+    def _create_nostr_event_and_publish(self, commit):
+        if not self.nostr_private_key:
+            self.nostr_private_key = PrivateKey().hex()
+            self.sudo().write({'nostr_private_key': self.nostr_private_key})
+
+        private_key = PrivateKey(bytes.fromhex(self.nostr_private_key))
+        nostr_manager = self.env['nostr.event.manager']
+        event = nostr_manager.create_git_event(commit, private_key)
+
+        relay_urls = self.env['ir.config_parameter'].sudo().get_param('nostr_bridge.relay_urls', '').split(',')
+        for relay_url in relay_urls:
+            if relay_url.strip():
+                success = nostr_manager.publish_event_sync(event, relay_url.strip())
+                if success:
+                    _logger.info(f"Successfully published event to {relay_url}")
+                else:
+                    _logger.warning(f"Failed to publish event to {relay_url}")
+
+    def sync_repository(self):
+        result = super(IVCSItem, self).sync_repository()
+        if result.get('type') == 'ir.actions.client' and result['params']['type'] == 'success':
+            repo = git.Repo(self.repo_path)
+            latest_commit = repo.head.commit
+            self._create_nostr_event_and_publish(latest_commit)
+        return result
+
+    def create_file(self, filename, content):
+        result = super(IVCSItem, self).create_file(filename, content)
+        if result.get('type') == 'ir.actions.client' and result['params']['type'] == 'success':
+            repo = git.Repo(self.repo_path)
+            latest_commit = repo.head.commit
+            self._create_nostr_event_and_publish(latest_commit)
+        return result
+
+    @api.model
+    def create(self, vals):
+        item = super(IVCSItem, self).create(vals)
+        repo = git.Repo(item.repo_path)
+        initial_commit = repo.head.commit
+        item._create_nostr_event_and_publish(initial_commit)
+        return item
+=== ./nostr_bridge/models/nostr_event_handler.py ===
+import json
+from odoo import api, models
+
+class NostrEventHandler(models.AbstractModel):
+    _name = 'nostr.event.handler'
+    _description = 'Nostr Event Handler'
+
+    @api.model
+    def handle_event(self, event):
+        content = json.loads(event.content)
+        if event.kind == 1:  # Text note
+            self._handle_message(content)
+        elif event.kind == 7:  # Reaction
+            self._handle_reaction(content)
+
+    def _handle_message(self, content):
+        self.env['mail.message'].create({
+            'body': content['body'],
+            'author_id': self._get_author_id(content['author']),
+            'model': content['channel'],
+            'res_id': content['res_id'],
+        })
+
+    def _handle_reaction(self, content):
+        # Implement reaction handling (e.g., likes, emojis)
+        pass
+
+    def _get_author_id(self, author_name):
+        partner = self.env['res.partner'].search([('name', '=', author_name)], limit=1)
+        if not partner:
+            partner = self.env['res.partner'].create({'name': author_name})
+        return partner.id
+=== ./nostr_bridge/controllers/main.py ===
+from odoo import http
+from odoo.http import request
+import json
+from nostr.event import Event
+from nostr.key import PrivateKey
+
+class NostrController(http.Controller):
+
+    @http.route('/nostr/authenticate', type='json', auth='public')
+    def authenticate(self, public_key, signature, message):
+        User = request.env['res.users'].sudo()
+        user_id = User.authenticate_nostr(public_key, signature, message)
+        if user_id:
+            request.session.authenticate(request.db, user_id, public_key)
+            return {'success': True, 'uid': user_id}
+        return {'success': False, 'error': 'Authentication failed'}
+
+    @http.route('/nostr/publish', type='json', auth='user')
+    def publish_event(self, event_data):
+        nostr_adapter = request.env['nostr.adapter'].sudo().get_adapter()
+        try:
+            nostr_adapter.publish_event(event_data)
+            return {'success': True}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/nostr/subscribe', type='json', auth='user')
+    def subscribe_to_events(self, filters):
+        nostr_adapter = request.env['nostr.adapter'].sudo().get_adapter()
+        try:
+            def callback(event):
+                # Process the event, e.g., create a message in Odoo
+                request.env['nostr.event.handler'].sudo().handle_event(event)
+
+            nostr_adapter.subscribe_to_events(filters, callback)
+            return {'success': True}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route('/nostr/get_public_key', type='json', auth='user')
+    def get_public_key(self):
+        user = request.env.user
+        return {'public_key': user.nostr_public_key}
+
+    @http.route('/nostr/create_event', type='json', auth='user')
+    def create_event(self, kind, content, tags=None):
+        user = request.env.user
+        private_key = PrivateKey.from_nsec(user.nostr_private_key)
+        event = Event(kind=kind, content=json.dumps(content), tags=tags or [])
+        event.sign(private_key.hex())
+        return {
+            'id': event.id,
+            'pubkey': event.public_key,
+            'created_at': event.created_at,
+            'kind': event.kind,
+            'tags': event.tags,
+            'content': event.content,
+            'sig': event.signature,
+        }
+=== ./nostr_bridge/controllers/__init__.py ===
+from . import main
+=== ./nostr_bridge/__manifest__.py ===
+# File: odoo_custom_addons/nostr_bridge/__manifest__.py
+
+{
+    'name': 'Nostr Bridge',
+    'version': '1.0',
+    'category': 'Social',
+    'summary': 'Bridge between Odoo messages, Git, and Nostr network',
+    'depends': ['base', 'mail', 'web'],
+    'data': [
+        'views/res_config_settings_views.xml',
+        'views/res_users_views.xml',
+        'views/res_partner_views.xml',
+        'views/git_repository_views.xml',
+        'security/ir.model.access.csv',
+    ],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
+    'license': 'LGPL-3',
+    'external_dependencies': {
+        'python': ['cryptography', 'gitpython', 'nostr'],
+    },
+}
+=== ./ivcs_git/allfiles.txt ===
+Home dir: ~/Downloads/Telegram Desktop/nostr-w-relay-main (2)/nostr-w-relay-main/src/views/components/login/odoo-nostr-project/odoo_custom_addons/ivcs_git/
+
+=== ./allfiles.txt ===
+=== ./security/ir.model.access.csv ===
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ivcs_item_user,ivcs.item.user,model_ivcs_item,base.group_user,1,1,1,1
+access_ivcs_version_user,ivcs.version.user,model_ivcs_version,base.group_user,1,1,1,1
+access_ivcs_metadata_user,ivcs.metadata.user,model_ivcs_metadata,base.group_user,1,1,1,1
+access_ivcs_file_user,ivcs.file.user,model_ivcs_file,base.group_user,1,1,1,1
+access_ivcs_workflow_user,ivcs.workflow.user,model_ivcs_workflow,base.group_user,1,1,1,1
+access_ivcs_workflow_stage_user,ivcs.workflow.stage.user,model_ivcs_workflow_stage,base.group_user,1,1,1,1
+access_ivcs_item_workflow_user,ivcs.item.workflow.user,model_ivcs_item_workflow,base.group_user,1,1,1,1
+access_ivcs_create_version_wizard,access.ivcs.create.version.wizard,model_ivcs_create_version_wizard,base.group_user,1,1,1,1
+access_ivcs_add_remote_wizard,access.ivcs.add.remote.wizard,model_ivcs_add_remote_wizard,base.group_user,1,1,1,1
+access_ivcs_create_file_wizard,access.ivcs.create.file.wizard,model_ivcs_create_file_wizard,base.group_user,1,1,1,1
+=== ./wizards/create_file_wizard.py ===
+from odoo import models, fields, api
+
+class IVCSCreateFileWizard(models.TransientModel):
+    _name = 'ivcs.create.file.wizard'
+    _description = 'Create File Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='IVCS Item', required=True)
+    filename = fields.Char(string='Filename', required=True)
+    content = fields.Text(string='File Content', required=True)
+
+    def action_create_file(self):
+        self.ensure_one()
+        return self.item_id.create_file(self.filename, self.content)
+=== ./wizards/git ===
+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
+
+odoo@3f681e703508:/opt/ivcs_repos/item_1$ git remote set-url origin https://presidentofyes12:---@github.com/presidentofyes12/test-repo.git
+odoo@3f681e703508:/opt/ivcs_repos/item_1$ git push -u origin master
+remote: Permission to presidentofyes12/test-repo.git denied to presidentofyes12.
+fatal: unable to access 'https://github.com/presidentofyes12/test-repo.git/': The requested URL returned error: 403
+odoo@3f681e703508:/opt/ivcs_repos/item_1$
+=== ./wizards/create_version_wizard.py ===
+from odoo import models, fields, api
+
+class CreateVersionWizard(models.TransientModel):
+    _name = 'ivcs.create.version.wizard'
+    _description = 'Create New Version Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='Item', required=True)
+    name = fields.Char('Version Name', required=True)
+    description = fields.Text('Description')
+
+    @api.model
+    def default_get(self, fields):
+        res = super(CreateVersionWizard, self).default_get(fields)
+        active_id = self.env.context.get('active_id')
+        if active_id:
+            item = self.env['ivcs.item'].browse(active_id)
+            res['item_id'] = item.id
+            last_version = item.version_ids.sorted(lambda v: v.create_date, reverse=True)[:1]
+            if last_version:
+                res['name'] = f"v{float(last_version.name[1:]) + 0.1:.1f}"
+        return res
+
+    def create_version(self):
+        self.ensure_one()
+        new_version = self.env['ivcs.version'].create({
+            'item_id': self.item_id.id,
+            'name': self.name,
+            'description': self.description,
+            'parent_id': self.item_id.current_version_id.id,
+        })
+        self.item_id.current_version_id = new_version.id
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'ivcs.version',
+            'res_id': new_version.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+=== ./wizards/__init__.py ===
+from . import create_version_wizard
+from . import add_remote_wizard
+from . import create_file_wizard
+=== ./wizards/create_version_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_create_version_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.create.version.wizard.form</field>
+        <field name="model">ivcs.create.version.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="name"/>
+                    <field name="description"/>
+                </group>
+                <footer>
+                    <button name="create_version" string="Create Version" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="ivcs_git.action_create_version_wizard" model="ir.actions.act_window">
+        <field name="name">Create New Version</field>
+        <field name="res_model">ivcs.create.version.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+=== ./wizards/add_remote_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_add_remote_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.add.remote.wizard.form</field>
+        <field name="model">ivcs.add.remote.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="remote_name"/>
+                    <field name="remote_url"/>
+                </group>
+                <footer>
+                    <button name="action_add_remote" string="Add Remote" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_add_remote_wizard" model="ir.actions.act_window">
+        <field name="name">Add Remote Repository</field>
+        <field name="res_model">ivcs.add.remote.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+=== ./wizards/create_file_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_create_file_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.create.file.wizard.form</field>
+        <field name="model">ivcs.create.file.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create File">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="filename"/>
+                    <field name="content"/>
+                </group>
+                <footer>
+                    <button name="action_create_file" string="Create File" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./wizards/add_remote_wizard.py ===
+from odoo import models, fields, api
+
+class AddRemoteWizard(models.TransientModel):
+    _name = 'ivcs.add.remote.wizard'
+    _description = 'Add Remote Repository Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='IVCS Item', required=True)
+    remote_name = fields.Char(string='Remote Name', default='origin', required=True)
+    remote_url = fields.Char(string='Remote URL', required=True)
+
+    def action_add_remote(self):
+        self.ensure_one()
+        return self.item_id.add_remote(self.remote_url, self.remote_name)
+=== ./__init__.py ===
+from . import models
+from . import wizards
+=== ./views/ivcs_workflow_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_workflow_form" model="ir.ui.view">
+        <field name="name">ivcs.workflow.form</field>
+        <field name="model">ivcs.workflow</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                    </group>
+                    <notebook>
+                        <page string="Stages">
+                            <field name="stage_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ivcs_workflow_tree" model="ir.ui.view">
+        <field name="name">ivcs.workflow.tree</field>
+        <field name="model">ivcs.workflow</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ivcs_workflow" model="ir.actions.act_window">
+        <field name="name">IVCS Workflows</field>
+        <field name="res_model">ivcs.workflow</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ivcs_workflow" name="Workflows" parent="menu_ivcs" action="action_ivcs_workflow" sequence="30"/>
+</odoo>
+=== ./views/ivcs_item_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_item_form" model="ir.ui.view">
+        <field name="name">ivcs.item.form</field>
+        <field name="model">ivcs.item</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="sync_repository" string="Sync Repository" type="object" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_create_version_wizard)d" string="Create New Version" type="action" class="oe_highlight"/>
+                    <button name="action_open_add_remote_wizard" string="Add Remote" type="object" class="oe_highlight"/>
+                    <button name="action_create_file" string="Create File" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="current_version_id"/>
+                        <field name="repo_path"/>
+                    </group>
+                    <notebook>
+                        <page string="Versions">
+                            <field name="version_ids"/>
+                        </page>
+                        <page string="Metadata">
+                            <field name="metadata_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ivcs_item_tree" model="ir.ui.view">
+        <field name="name">ivcs.item.tree</field>
+        <field name="model">ivcs.item</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="current_version_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ivcs_item" model="ir.actions.act_window">
+        <field name="name">IVCS Items</field>
+        <field name="res_model">ivcs.item</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ivcs" name="IVCS" sequence="10"/>
+    <menuitem id="menu_ivcs_item" name="Items" parent="menu_ivcs" action="action_ivcs_item" sequence="10"/>
+</odoo>
+=== ./views/res_config_settings_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ivcs_git</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="IVCS Git" string="IVCS Git" data-key="ivcs_git">
+                    <h2>GitHub Settings</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">GitHub Token</span>
+                                <div class="text-muted">
+                                    Enter your GitHub Personal Access Token
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="github_token" password="True"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./views/ivcs_item_search_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_item_search" model="ir.ui.view">
+        <field name="name">ivcs.item.search</field>
+        <field name="model">ivcs.item</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="current_version_id"/>
+                <filter string="Draft Versions" name="draft_versions" domain="[('current_version_id.state', '=', 'draft')]"/>
+                <filter string="Released Versions" name="released_versions" domain="[('current_version_id.state', '=', 'released')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Current Version" name="group_by_current_version" context="{'group_by': 'current_version_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>
+=== ./views/ivcs_version_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_version_form" model="ir.ui.view">
+        <field name="name">ivcs.version.form</field>
+        <field name="model">ivcs.version</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="release_version" string="Release" type="object" states="draft"/>
+                    <button name="deprecate_version" string="Deprecate" type="object" states="released"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="item_id"/>
+                        <field name="parent_id"/>
+                        <field name="commit_hash"/>
+                        <field name="create_date"/>
+                    </group>
+                    <notebook>
+                        <page string="Metadata">
+                            <field name="metadata_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ivcs_version_tree" model="ir.ui.view">
+        <field name="name">ivcs.version.tree</field>
+        <field name="model">ivcs.version</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="item_id"/>
+                <field name="state"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ivcs_version" model="ir.actions.act_window">
+        <field name="name">IVCS Versions</field>
+        <field name="res_model">ivcs.version</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ivcs_version" name="Versions" parent="menu_ivcs" action="action_ivcs_version" sequence="20"/>
+</odoo>
+=== ./views/create_file_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_create_file_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.create.file.wizard.form</field>
+        <field name="model">ivcs.create.file.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create File">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="filename"/>
+                    <field name="content"/>
+                </group>
+                <footer>
+                    <button name="action_create_file" string="Create File" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./data/ir_cron_data.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_ivcs_sync" model="ir.cron">
+            <field name="name">IVCS: Sync Repositories</field>
+            <field name="model_id" ref="model_ivcs_item"/>
+            <field name="state">code</field>
+            <field name="code">model._sync_repositories()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+    </data>
+</odoo>
+=== ./models/ivcs_metadata.py ===
+from odoo import models, fields
+
+class IVCSMetadata(models.Model):
+    _name = 'ivcs.metadata'
+    _description = 'IVCS Metadata'
+
+    item_id = fields.Many2one('ivcs.item', string='Item')
+    version_id = fields.Many2one('ivcs.version', string='Version')
+    key = fields.Char('Key', required=True)
+    value = fields.Text('Value', required=True)
+=== ./models/res_config_settings.py ===
+from odoo import fields, models
+
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
+
+    ivcs_repo_base_path = fields.Char('IVCS Repository Base Path', config_parameter='ivcs.repo_base_path')
+    github_token = fields.Char(string="GitHub Token", config_parameter='ivcs_git.github_token')
+=== ./models/ivcs_workflow.py ===
+from odoo import models, fields, api
+from odoo.exceptions import UserError
+
+class IVCSWorkflow(models.Model):
+    _name = 'ivcs.workflow'
+    _description = 'IVCS Workflow'
+
+    name = fields.Char('Workflow Name', required=True)
+    description = fields.Text('Description')
+    stage_ids = fields.One2many('ivcs.workflow.stage', 'workflow_id', string='Stages')
+
+class IVCSWorkflowStage(models.Model):
+    _name = 'ivcs.workflow.stage'
+    _description = 'IVCS Workflow Stage'
+    _order = 'sequence'
+
+    name = fields.Char('Stage Name', required=True)
+    workflow_id = fields.Many2one('ivcs.workflow', string='Workflow', required=True)
+    sequence = fields.Integer('Sequence', default=10)
+
+class IVCSItemWorkflow(models.Model):
+    _name = 'ivcs.item.workflow'
+    _description = 'IVCS Item Workflow'
+
+    item_id = fields.Many2one('ivcs.item', string='Item', required=True)
+    workflow_id = fields.Many2one('ivcs.workflow', string='Workflow', required=True)
+    current_stage_id = fields.Many2one('ivcs.workflow.stage', string='Current Stage')
+
+    def move_to_next_stage(self):
+        self.ensure_one()
+        current_sequence = self.current_stage_id.sequence
+        next_stage = self.workflow_id.stage_ids.filtered(lambda s: s.sequence > current_sequence)
+        if next_stage:
+            self.current_stage_id = next_stage[0]
+        else:
+            raise UserError("This item is already at the final stage of the workflow.")
+=== ./models/ivcs_version.py ===
+from odoo import models, fields, api
+from odoo.exceptions import UserError
+import git
+import os
+
+class IVCSVersion(models.Model):
+    _name = 'ivcs.version'
+    _description = 'IVCS Version'
+
+    name = fields.Char('Version Name', required=True)
+    description = fields.Text('Description')
+    item_id = fields.Many2one('ivcs.item', string='Item', required=True)
+    parent_id = fields.Many2one('ivcs.version', string='Parent Version')
+    commit_hash = fields.Char('Commit Hash', readonly=True)
+    create_date = fields.Datetime('Created On', readonly=True, default=fields.Datetime.now)
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('released', 'Released'),
+        ('deprecated', 'Deprecated')
+    ], string='Status', default='draft')
+    metadata_ids = fields.One2many('ivcs.metadata', 'version_id', string='Metadata')
+
+    @api.model
+    def create(self, vals):
+        version = super(IVCSVersion, self).create(vals)
+        version._create_commit()
+        return version
+
+    def _create_commit(self):
+        repo = git.Repo(self.item_id.repo_path)
+        readme_path = os.path.join(self.item_id.repo_path, 'README.md')
+        with open(readme_path, 'w') as f:
+            f.write(f"# {self.item_id.name} - {self.name}\n\n{self.description}")
+        repo.index.add(['README.md'])
+        commit = repo.index.commit(f"Version {self.name}: {self.description}")
+        self.commit_hash = commit.hexsha
+
+    def release_version(self):
+        self.ensure_one()
+        if self.state != 'draft':
+            raise UserError("Only draft versions can be released.")
+        self.state = 'released'
+
+    def deprecate_version(self):
+        self.ensure_one()
+        if self.state != 'released':
+            raise UserError("Only released versions can be deprecated.")
+        self.state = 'deprecated'
+=== ./models/__init__.py ===
+from . import ivcs_item
+from . import ivcs_version
+from . import ivcs_metadata
+from . import ivcs_file
+from . import ivcs_workflow
+from . import res_config_settings
+=== ./models/ivcs_item.py ===
+# File: odoo_custom_addons/ivcs_git/models/ivcs_item.py
+
+from odoo import _, models, fields, api
+from odoo.exceptions import UserError
+import git
+import os
+import logging
+
+_logger = logging.getLogger(__name__)
+
+class IVCSItem(models.Model):
+    _name = 'ivcs.item'
+    _description = 'IVCS Item'
+
+    name = fields.Char('Name', required=True)
+    description = fields.Text('Description')
+    current_version_id = fields.Many2one('ivcs.version', string='Current Version')
+    version_ids = fields.One2many('ivcs.version', 'item_id', string='Versions')
+    metadata_ids = fields.One2many('ivcs.metadata', 'item_id', string='Metadata')
+    repo_path = fields.Char('Repository Path', compute='_compute_repo_path')
+
+    @api.depends('name')
+    def _compute_repo_path(self):
+        for item in self:
+            item.repo_path = os.path.join(self.env['ir.config_parameter'].sudo().get_param('ivcs.repo_base_path', '/opt/ivcs_repos'), f"item_{item.id}")
+
+    def _initialize_repository(self):
+        if not os.path.exists(self.repo_path):
+            os.makedirs(self.repo_path)
+            repo = git.Repo.init(self.repo_path)
+            readme_path = os.path.join(self.repo_path, 'README.md')
+            with open(readme_path, 'w') as f:
+                f.write(f"# {self.name}\n\n{self.description}")
+            repo.index.add(['README.md'])
+            repo.index.commit("Initial commit")
+            self._create_initial_version()
+
+    def action_create_file(self):
+        self.ensure_one()
+        return {
+            'name': _('Create File'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ivcs.create.file.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_item_id': self.id},
+        }
+
+    def _create_git_event(self, event_type, **kwargs):
+        nostr_event_manager = self.env['nostr.event.manager']
+        if event_type == 'commit':
+            event = nostr_event_manager.create_git_event(self.repo_path, kwargs.get('commit_hash'))
+        elif event_type == 'branch':
+            event = nostr_event_manager.create_branch_event(self.repo_path, kwargs.get('branch_name'))
+        elif event_type == 'merge':
+            event = nostr_event_manager.create_merge_event(self.repo_path, kwargs.get('source_branch'), kwargs.get('target_branch'))
+        elif event_type == 'tag':
+            event = nostr_event_manager.create_tag_event(self.repo_path, kwargs.get('tag_name'), kwargs.get('tag_message'))
+        else:
+            raise UserError(_("Unsupported git event type"))
+        
+        nostr_event_manager.publish_event(event)
+
+    def create_file(self, filename, content):
+        self.ensure_one()
+        file_path = os.path.join(self.repo_path, filename)
+        
+        if os.path.exists(file_path):
+            raise UserError(_("A file with this name already exists."))
+        
+        try:
+            with open(file_path, 'w') as f:
+                f.write(content)
+            
+            repo = git.Repo(self.repo_path)
+            repo.index.add([filename])
+            commit = repo.index.commit(f"Add new file: {filename}")
+            
+            # Create and publish Nostr event for the commit
+            self._create_git_event('commit', commit_hash=commit.hexsha)
+            
+            # Sync with remote repository
+            self.sync_repository()
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _("File Created"),
+                    'message': _("File %s has been created and committed.") % filename,
+                    'type': 'success',
+                }
+            }
+        except Exception as e:
+            raise UserError(_("Failed to create file: %s") % str(e))
+
+    @api.model
+    def create(self, vals):
+        item = super(IVCSItem, self).create(vals)
+        item._initialize_repository()
+        return item
+
+    def verify_remote_url(self):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        remote_url = repo.remotes.origin.url
+        
+        # Remove any existing token from the URL
+        from urllib.parse import urlparse, urlunparse
+        parsed_url = urlparse(remote_url)
+        clean_url = urlunparse(parsed_url._replace(netloc=parsed_url.netloc.split('@')[-1]))
+    
+        # Update the remote URL without the token
+        repo.remotes.origin.set_url(clean_url)
+        
+        _logger.info(f"Verified remote URL: {clean_url}")
+        return self._return_success('Remote URL Verified', 'The remote URL has been verified and updated if necessary.')
+
+    def _create_initial_version(self):
+        version = self.env['ivcs.version'].create({
+            'item_id': self.id,
+            'name': 'v1.0',
+            'description': 'Initial version',
+        })
+        self.current_version_id = version.id
+
+    def setup_git_auth(self):
+        git_token = self.env['ir.config_parameter'].sudo().get_param('ivcs_git.github_token')
+        if not git_token:
+            raise UserError(_("GitHub token not configured. Please set it in the settings."))
+        
+        repo = git.Repo(self.repo_path)
+        with repo.config_writer() as git_config:
+            git_config.set_value('user', 'name', 'Odoo IVCS')
+            git_config.set_value('user', 'email', 'odoo@example.com')
+        
+        remote_url = repo.remotes.origin.url
+        if not remote_url.startswith('https://'):
+            raise UserError(_("Remote URL is not using HTTPS. Please update the remote URL."))
+        
+        # Parse the existing URL
+        from urllib.parse import urlparse, urlunparse
+        parsed_url = urlparse(remote_url)
+        
+        # Reconstruct the URL with the token
+        new_netloc = f"{git_token}@{parsed_url.netloc}"
+        new_url = urlunparse(parsed_url._replace(netloc=new_netloc))
+        
+        # Set the new URL for the origin remote
+        repo.remotes.origin.set_url(new_url)
+        
+        # Log the URL (without the token) for debugging
+        _logger.info(f"Updated remote URL: https://{parsed_url.netloc}{parsed_url.path}")
+    
+    @api.model
+    def _sync_repositories(self):
+        items = self.search([])
+        for item in items:
+            repo = git.Repo(item.repo_path)
+            try:
+                repo.remotes.origin.pull()
+                _logger.info(f"Successfully synced repository for item {item.name}")
+            except Exception as e:
+                _logger.error(f"Failed to sync repository for item {item.name}: {str(e)}")
+
+    def sync_repository(self):
+        self.ensure_one()
+        self.verify_remote_url()
+        self.setup_git_auth()
+        try:
+            repo = git.Repo(self.repo_path)
+            if not repo.remotes:
+                return self._return_warning('No Remote Repository', 'This repository does not have a remote configured. Please add a remote repository first.')
+            
+            origin = repo.remotes.origin
+            if not origin.exists():
+                return self._return_warning('Remote Not Found', 'The remote "origin" does not exist. Please configure the remote repository.')
+            
+            # Fetch the latest changes
+            origin.fetch()
+            
+            # Get the current branch name
+            current_branch = repo.active_branch.name
+            
+            # Check if the remote branch exists
+            remote_branch = f'origin/{current_branch}'
+            if remote_branch not in repo.references:
+                # If remote branch doesn't exist, push the current branch to create it
+                origin.push(current_branch)
+                return self._return_success('Branch Created', f'The branch "{current_branch}" has been created on the remote repository.')
+            
+            # Check if we need to pull changes
+            if repo.is_dirty() or repo.untracked_files:
+                # There are local changes, commit them first
+                repo.git.add(A=True)
+                repo.index.commit("Local changes before sync")
+            
+            # Pull changes
+            origin.pull(current_branch)
+            
+            # Push any local commits
+            origin.push(current_branch)
+            
+            self._create_git_event('commit', commit_hash=repo.head.commit.hexsha)
+            
+            return self._return_success('Repository Synced', 'The repository has been successfully synced.')
+        except git.GitCommandError as e:
+            _logger.error(f"Git command error: {str(e)}")
+            return self._return_error('Sync Failed', f'Failed to sync repository: {str(e)}')
+        except Exception as e:
+            _logger.error(f"Error syncing repository: {str(e)}")
+            return self._return_error('Sync Failed', f'An unexpected error occurred: {str(e)}')
+
+    def _return_warning(self, title, message):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _(title),
+                'message': _(message),
+                'type': 'warning',
+            }
+        }
+
+    def _return_success(self, title, message):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _(title),
+                'message': _(message),
+                'type': 'success',
+            }
+        }
+
+    def _return_error(self, title, message):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _(title),
+                'message': _(message),
+                'type': 'danger',
+            }
+        }
+
+    def setup_git_auth(self):
+        git_token = self.env['ir.config_parameter'].sudo().get_param('ivcs_git.github_token')
+        if not git_token:
+            raise UserError(_("GitHub token not configured. Please set it in the settings."))
+        
+        repo = git.Repo(self.repo_path)
+        with repo.config_writer() as git_config:
+            git_config.set_value('user', 'name', 'Odoo IVCS')
+            git_config.set_value('user', 'email', 'odoo@example.com')
+        
+        remote_url = repo.remotes.origin.url
+        if not remote_url.startswith('https://'):
+            raise UserError(_("Remote URL is not using HTTPS. Please update the remote URL."))
+        
+        new_url = f'https://{git_token}@' + remote_url[8:]
+        repo.remotes.origin.set_url(new_url)
+
+    def action_open_add_remote_wizard(self):
+        self.ensure_one()
+        return {
+            'name': _('Add Remote Repository'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ivcs.add.remote.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_item_id': self.id},
+        }
+
+    def add_remote(self, remote_url, remote_name='origin'):
+        self.ensure_one()
+        try:
+            repo = git.Repo(self.repo_path)
+            if remote_name in repo.remotes:
+                repo.delete_remote(remote_name)
+            repo.create_remote(remote_name, remote_url)
+            return self._return_success('Remote Added', 'Remote repository has been added successfully.')
+        except Exception as e:
+            return self._return_error('Failed to Add Remote', f'An error occurred while adding the remote: {str(e)}')
+
+    def create_branch(self, branch_name):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        repo.git.checkout('-b', branch_name)
+        self._create_git_event('branch', branch_name=branch_name)
+        return self._return_success('Branch Created', f'Branch {branch_name} has been created.')
+
+    def merge_branches(self, source_branch, target_branch):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        repo.git.checkout(target_branch)
+        repo.git.merge(source_branch)
+        self._create_git_event('merge', source_branch=source_branch, target_branch=target_branch)
+        return self._return_success('Branches Merged', f'Branch {source_branch} has been merged into {target_branch}.')
+
+    def create_tag(self, tag_name, tag_message):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        repo.create_tag(tag_name, message=tag_message)
+        self._create_git_event('tag', tag_name=tag_name, tag_message=tag_message)
+        return self._return_success('Tag Created', f'Tag {tag_name} has been created.')
+
+
+=== ./models/ivcs_file.py ===
+from odoo import models, fields, api
+import base64
+import os
+import git
+
+class IVCSFile(models.Model):
+    _name = 'ivcs.file'
+    _description = 'IVCS File'
+
+    name = fields.Char('File Name', required=True)
+    item_id = fields.Many2one('ivcs.item', string='Item', required=True)
+    version_id = fields.Many2one('ivcs.version', string='Version', required=True)
+    file_content = fields.Binary('File Content', attachment=True)
+    file_type = fields.Selection([
+        ('text', 'Text'),
+        ('binary', 'Binary')
+    ], string='File Type', required=True)
+
+    @api.model
+    def create(self, vals):
+        file = super(IVCSFile, self).create(vals)
+        file._add_to_repository()
+        return file
+
+    def _add_to_repository(self):
+        repo = git.Repo(self.item_id.repo_path)
+        file_path = os.path.join(self.item_id.repo_path, self.name)
+        
+        if self.file_type == 'text':
+            content = base64.b64decode(self.file_content).decode('utf-8')
+            with open(file_path, 'w') as f:
+                f.write(content)
+        else:
+            content = base64.b64decode(self.file_content)
+            with open(file_path, 'wb') as f:
+                f.write(content)
+
+        repo.index.add([self.name])
+        commit = repo.index.commit(f"Add file: {self.name}")
+        self.version_id.commit_hash = commit.hexsha
+=== ./__manifest__.py ===
+{
+    'name': 'Integrated Version Control System with Git',
+    'version': '1.0',
+    'category': 'Tools',
+    'summary': 'Git-based version control system integrated with Odoo',
+    'depends': ['base', 'mail'],
+    'data': [
+        'security/ir.model.access.csv',
+        'wizards/create_version_wizard_view.xml',
+        'wizards/add_remote_wizard_view.xml',
+        'wizards/create_file_wizard_view.xml',
+        'views/ivcs_item_views.xml',
+        'views/ivcs_version_views.xml',
+        'views/ivcs_workflow_views.xml',
+        'views/res_config_settings_views.xml',
+        'data/ir_cron_data.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}
+=== ./ivcs_git/security/ir.model.access.csv ===
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ivcs_item_user,ivcs.item.user,model_ivcs_item,base.group_user,1,1,1,1
+access_ivcs_version_user,ivcs.version.user,model_ivcs_version,base.group_user,1,1,1,1
+access_ivcs_metadata_user,ivcs.metadata.user,model_ivcs_metadata,base.group_user,1,1,1,1
+access_ivcs_file_user,ivcs.file.user,model_ivcs_file,base.group_user,1,1,1,1
+access_ivcs_workflow_user,ivcs.workflow.user,model_ivcs_workflow,base.group_user,1,1,1,1
+access_ivcs_workflow_stage_user,ivcs.workflow.stage.user,model_ivcs_workflow_stage,base.group_user,1,1,1,1
+access_ivcs_item_workflow_user,ivcs.item.workflow.user,model_ivcs_item_workflow,base.group_user,1,1,1,1
+access_ivcs_create_version_wizard,access.ivcs.create.version.wizard,model_ivcs_create_version_wizard,base.group_user,1,1,1,1
+access_ivcs_add_remote_wizard,access.ivcs.add.remote.wizard,model_ivcs_add_remote_wizard,base.group_user,1,1,1,1
+access_ivcs_create_file_wizard,access.ivcs.create.file.wizard,model_ivcs_create_file_wizard,base.group_user,1,1,1,1
+access_ivcs_commit_user,ivcs.commit.user,model_ivcs_commit,base.group_user,1,1,1,1
+access_ivcs_create_branch_wizard,access.ivcs.create.branch.wizard,model_ivcs_create_branch_wizard,base.group_user,1,1,1,1
+access_ivcs_switch_branch_wizard,access.ivcs.switch.branch.wizard,model_ivcs_switch_branch_wizard,base.group_user,1,1,1,1
+access_ivcs_merge_branches_wizard,access.ivcs.merge.branches.wizard,model_ivcs_merge_branches_wizard,base.group_user,1,1,1,1
+access_ivcs_rebase_branch_wizard,access.ivcs.rebase.branch.wizard,model_ivcs_rebase_branch_wizard,base.group_user,1,1,1,1
+=== ./ivcs_git/wizards/switch_branch_wizard.py ===
+# File: odoo_custom_addons/ivcs_git/wizards/switch_branch_wizard.py
+
+from odoo import models, fields, api
+
+class SwitchBranchWizard(models.TransientModel):
+    _name = 'ivcs.switch.branch.wizard'
+    _description = 'Switch Branch Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='IVCS Item', required=True)
+    branch_name = fields.Char(string='Branch Name', required=True)
+
+    def action_switch_branch(self):
+        self.ensure_one()
+        return self.item_id.switch_branch(self.branch_name)
+=== ./ivcs_git/wizards/create_file_wizard.py ===
+from odoo import models, fields, api
+
+class IVCSCreateFileWizard(models.TransientModel):
+    _name = 'ivcs.create.file.wizard'
+    _description = 'Create File Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='IVCS Item', required=True)
+    filename = fields.Char(string='Filename', required=True)
+    content = fields.Text(string='File Content', required=True)
+
+    def action_create_file(self):
+        self.ensure_one()
+        return self.item_id.create_file(self.filename, self.content)
+=== ./ivcs_git/wizards/git ===
+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
+
+odoo@3f681e703508:/opt/ivcs_repos/item_1$ git remote set-url origin https://presidentofyes12:---@github.com/presidentofyes12/test-repo.git
+odoo@3f681e703508:/opt/ivcs_repos/item_1$ git push -u origin master
+remote: Permission to presidentofyes12/test-repo.git denied to presidentofyes12.
+fatal: unable to access 'https://github.com/presidentofyes12/test-repo.git/': The requested URL returned error: 403
+odoo@3f681e703508:/opt/ivcs_repos/item_1$
+=== ./ivcs_git/wizards/create_branch_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_create_branch_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.create.branch.wizard.form</field>
+        <field name="model">ivcs.create.branch.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Branch">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="branch_name"/>
+                </group>
+                <footer>
+                    <button name="action_create_branch" string="Create Branch" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/wizards/switch_branch_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_switch_branch_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.switch.branch.wizard.form</field>
+        <field name="model">ivcs.switch.branch.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Switch Branch">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="branch_name"/>
+                </group>
+                <footer>
+                    <button name="action_switch_branch" string="Switch Branch" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/wizards/create_version_wizard.py ===
+from odoo import models, fields, api
+
+class CreateVersionWizard(models.TransientModel):
+    _name = 'ivcs.create.version.wizard'
+    _description = 'Create New Version Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='Item', required=True)
+    name = fields.Char('Version Name', required=True)
+    description = fields.Text('Description')
+
+    @api.model
+    def default_get(self, fields):
+        res = super(CreateVersionWizard, self).default_get(fields)
+        active_id = self.env.context.get('active_id')
+        if active_id:
+            item = self.env['ivcs.item'].browse(active_id)
+            res['item_id'] = item.id
+            last_version = item.version_ids.sorted(lambda v: v.create_date, reverse=True)[:1]
+            if last_version:
+                res['name'] = f"v{float(last_version.name[1:]) + 0.1:.1f}"
+        return res
+
+    def create_version(self):
+        self.ensure_one()
+        new_version = self.env['ivcs.version'].create({
+            'item_id': self.item_id.id,
+            'name': self.name,
+            'description': self.description,
+            'parent_id': self.item_id.current_version_id.id,
+        })
+        self.item_id.current_version_id = new_version.id
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'ivcs.version',
+            'res_id': new_version.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+=== ./ivcs_git/wizards/rebase_branch_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rebase_branch_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.rebase.branch.wizard.form</field>
+        <field name="model">ivcs.rebase.branch.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Rebase Branch">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="branch_name"/>
+                    <field name="onto_branch"/>
+                </group>
+                <footer>
+                    <button name="action_rebase_branch" string="Rebase Branch" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/wizards/__init__.py ===
+# File: odoo_custom_addons/ivcs_git/wizards/__init__.py
+
+from . import create_version_wizard
+from . import add_remote_wizard
+from . import create_file_wizard
+from . import create_branch_wizard
+from . import switch_branch_wizard
+from . import merge_branches_wizard
+from . import rebase_branch_wizard
+=== ./ivcs_git/wizards/create_version_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_create_version_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.create.version.wizard.form</field>
+        <field name="model">ivcs.create.version.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="name"/>
+                    <field name="description"/>
+                </group>
+                <footer>
+                    <button name="create_version" string="Create Version" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="ivcs_git.action_create_version_wizard" model="ir.actions.act_window">
+        <field name="name">Create New Version</field>
+        <field name="res_model">ivcs.create.version.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+=== ./ivcs_git/wizards/merge_branches_wizard.py ===
+# File: odoo_custom_addons/ivcs_git/wizards/merge_branches_wizard.py
+
+from odoo import models, fields, api
+
+class MergeBranchesWizard(models.TransientModel):
+    _name = 'ivcs.merge.branches.wizard'
+    _description = 'Merge Branches Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='IVCS Item', required=True)
+    source_branch = fields.Char(string='Source Branch', required=True)
+    target_branch = fields.Char(string='Target Branch', required=True)
+
+    def action_merge_branches(self):
+        self.ensure_one()
+        return self.item_id.merge_branches(self.source_branch, self.target_branch)
+=== ./ivcs_git/wizards/add_remote_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_add_remote_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.add.remote.wizard.form</field>
+        <field name="model">ivcs.add.remote.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="remote_name"/>
+                    <field name="remote_url"/>
+                </group>
+                <footer>
+                    <button name="action_add_remote" string="Add Remote" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_add_remote_wizard" model="ir.actions.act_window">
+        <field name="name">Add Remote Repository</field>
+        <field name="res_model">ivcs.add.remote.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+=== ./ivcs_git/wizards/create_file_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_create_file_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.create.file.wizard.form</field>
+        <field name="model">ivcs.create.file.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create File">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="filename"/>
+                    <field name="content"/>
+                </group>
+                <footer>
+                    <button name="action_create_file" string="Create File" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/wizards/merge_branches_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_merge_branches_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.merge.branches.wizard.form</field>
+        <field name="model">ivcs.merge.branches.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Merge Branches">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="source_branch"/>
+                    <field name="target_branch"/>
+                </group>
+                <footer>
+                    <button name="action_merge_branches" string="Merge Branches" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/wizards/add_remote_wizard.py ===
+from odoo import models, fields, api
+
+class AddRemoteWizard(models.TransientModel):
+    _name = 'ivcs.add.remote.wizard'
+    _description = 'Add Remote Repository Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='IVCS Item', required=True)
+    remote_name = fields.Char(string='Remote Name', default='origin', required=True)
+    remote_url = fields.Char(string='Remote URL', required=True)
+
+    def action_add_remote(self):
+        self.ensure_one()
+        return self.item_id.add_remote(self.remote_url, self.remote_name)
+=== ./ivcs_git/wizards/create_branch_wizard.py ===
+# File: odoo_custom_addons/ivcs_git/wizards/create_branch_wizard.py
+
+from odoo import models, fields, api
+
+class CreateBranchWizard(models.TransientModel):
+    _name = 'ivcs.create.branch.wizard'
+    _description = 'Create Branch Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='IVCS Item', required=True)
+    branch_name = fields.Char(string='Branch Name', required=True)
+
+    def action_create_branch(self):
+        self.ensure_one()
+        return self.item_id.create_branch(self.branch_name)
+=== ./ivcs_git/wizards/rebase_branch_wizard.py ===
+# File: odoo_custom_addons/ivcs_git/wizards/rebase_branch_wizard.py
+
+from odoo import models, fields, api
+
+class RebaseBranchWizard(models.TransientModel):
+    _name = 'ivcs.rebase.branch.wizard'
+    _description = 'Rebase Branch Wizard'
+
+    item_id = fields.Many2one('ivcs.item', string='IVCS Item', required=True)
+    branch_name = fields.Char(string='Branch to Rebase', required=True)
+    onto_branch = fields.Char(string='Onto Branch', required=True)
+
+    def action_rebase_branch(self):
+        self.ensure_one()
+        return self.item_id.rebase_branch(self.branch_name, self.onto_branch)
+=== ./ivcs_git/__init__.py ===
+from . import models
+from . import wizards
+=== ./ivcs_git/views/ivcs_workflow_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_workflow_form" model="ir.ui.view">
+        <field name="name">ivcs.workflow.form</field>
+        <field name="model">ivcs.workflow</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                    </group>
+                    <notebook>
+                        <page string="Stages">
+                            <field name="stage_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ivcs_workflow_tree" model="ir.ui.view">
+        <field name="name">ivcs.workflow.tree</field>
+        <field name="model">ivcs.workflow</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ivcs_workflow" model="ir.actions.act_window">
+        <field name="name">IVCS Workflows</field>
+        <field name="res_model">ivcs.workflow</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ivcs_workflow" name="Workflows" parent="menu_ivcs" action="action_ivcs_workflow" sequence="30"/>
+</odoo>
+=== ./ivcs_git/views/ivcs_item_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_item_form" model="ir.ui.view">
+        <field name="name">ivcs.item.form</field>
+        <field name="model">ivcs.item</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="sync_repository" string="Sync Repository" type="object" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_create_version_wizard)d" string="Create New Version" type="action" class="oe_highlight"/>
+                    <button name="action_open_add_remote_wizard" string="Add Remote" type="object" class="oe_highlight"/>
+                    <button name="action_create_file" string="Create File" type="object" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_create_branch_wizard)d" string="Create Branch" type="action" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_switch_branch_wizard)d" string="Switch Branch" type="action" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_merge_branches_wizard)d" string="Merge Branches" type="action" class="oe_highlight"/>
+                    <button name="%(ivcs_git.action_rebase_branch_wizard)d" string="Rebase Branch" type="action" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="current_version_id"/>
+                        <field name="repo_path"/>
+                        <field name="current_branch"/>
+                    </group>
+                    <notebook>
+                        <page string="Versions">
+                            <field name="version_ids"/>
+                        </page>
+                        <page string="Metadata">
+                            <field name="metadata_ids"/>
+                        </page>
+                        <page string="Commits">
+                            <field name="commit_ids">
+                                <tree>
+                                    <field name="commit_hash"/>
+                                    <field name="message"/>
+                                    <field name="branch"/>
+                                    <field name="timestamp"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ivcs_item" model="ir.actions.act_window">
+        <field name="name">IVCS Items</field>
+        <field name="res_model">ivcs.item</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ivcs" name="IVCS" sequence="10"/>
+    <menuitem id="menu_ivcs_item" name="Items" parent="menu_ivcs" action="action_ivcs_item" sequence="10"/>
+</odoo>
+=== ./ivcs_git/views/res_config_settings_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ivcs_git</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="IVCS Git" string="IVCS Git" data-key="ivcs_git">
+                    <h2>GitHub Settings</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">GitHub Token</span>
+                                <div class="text-muted">
+                                    Enter your GitHub Personal Access Token
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="github_token" password="True"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/views/create_branch_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_create_branch_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.create.branch.wizard.form</field>
+        <field name="model">ivcs.create.branch.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Branch">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="branch_name"/>
+                </group>
+                <footer>
+                    <button name="action_create_branch" string="Create Branch" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_create_branch_wizard" model="ir.actions.act_window">
+        <field name="name">Create Branch</field>
+        <field name="res_model">ivcs.create.branch.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_ivcs_item"/>
+        <field name="binding_view_types">form</field>
+    </record>
+</odoo>
+=== ./ivcs_git/views/switch_branch_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_switch_branch_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.switch.branch.wizard.form</field>
+        <field name="model">ivcs.switch.branch.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Switch Branch">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="branch_name"/>
+                </group>
+                <footer>
+                    <button name="action_switch_branch" string="Switch Branch" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/views/ivcs_item_search_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_item_search" model="ir.ui.view">
+        <field name="name">ivcs.item.search</field>
+        <field name="model">ivcs.item</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="current_version_id"/>
+                <filter string="Draft Versions" name="draft_versions" domain="[('current_version_id.state', '=', 'draft')]"/>
+                <filter string="Released Versions" name="released_versions" domain="[('current_version_id.state', '=', 'released')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Current Version" name="group_by_current_version" context="{'group_by': 'current_version_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/views/ivcs_version_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_version_form" model="ir.ui.view">
+        <field name="name">ivcs.version.form</field>
+        <field name="model">ivcs.version</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="release_version" string="Release" type="object" states="draft"/>
+                    <button name="deprecate_version" string="Deprecate" type="object" states="released"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="item_id"/>
+                        <field name="parent_id"/>
+                        <field name="commit_hash"/>
+                        <field name="create_date"/>
+                    </group>
+                    <notebook>
+                        <page string="Metadata">
+                            <field name="metadata_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ivcs_version_tree" model="ir.ui.view">
+        <field name="name">ivcs.version.tree</field>
+        <field name="model">ivcs.version</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="item_id"/>
+                <field name="state"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ivcs_version" model="ir.actions.act_window">
+        <field name="name">IVCS Versions</field>
+        <field name="res_model">ivcs.version</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ivcs_version" name="Versions" parent="menu_ivcs" action="action_ivcs_version" sequence="20"/>
+</odoo>
+=== ./ivcs_git/views/rebase_branch_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rebase_branch_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.rebase.branch.wizard.form</field>
+        <field name="model">ivcs.rebase.branch.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Rebase Branch">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="branch_name"/>
+                    <field name="onto_branch"/>
+                </group>
+                <footer>
+                    <button name="action_rebase_branch" string="Rebase Branch" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/views/ivcs_commit_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_commit_tree" model="ir.ui.view">
+        <field name="name">ivcs.commit.tree</field>
+        <field name="model">ivcs.commit</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="commit_hash"/>
+                <field name="message"/>
+                <field name="branch"/>
+                <field name="timestamp"/>
+                <field name="item_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ivcs_commit_form" model="ir.ui.view">
+        <field name="name">ivcs.commit.form</field>
+        <field name="model">ivcs.commit</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="commit_hash"/>
+                        <field name="message"/>
+                        <field name="branch"/>
+                        <field name="timestamp"/>
+                        <field name="item_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ivcs_commit" model="ir.actions.act_window">
+        <field name="name">IVCS Commits</field>
+        <field name="res_model">ivcs.commit</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_ivcs_commit" name="Commits" parent="menu_ivcs" action="action_ivcs_commit" sequence="30"/>
+</odoo>
+=== ./ivcs_git/views/create_file_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ivcs_create_file_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.create.file.wizard.form</field>
+        <field name="model">ivcs.create.file.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create File">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="filename"/>
+                    <field name="content"/>
+                </group>
+                <footer>
+                    <button name="action_create_file" string="Create File" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/views/ivcs_wizard_actions.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_create_version_wizard" model="ir.actions.act_window">
+        <field name="name">Create New Version</field>
+        <field name="res_model">ivcs.create.version.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_create_branch_wizard" model="ir.actions.act_window">
+        <field name="name">Create Branch</field>
+        <field name="res_model">ivcs.create.branch.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_switch_branch_wizard" model="ir.actions.act_window">
+        <field name="name">Switch Branch</field>
+        <field name="res_model">ivcs.switch.branch.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_merge_branches_wizard" model="ir.actions.act_window">
+        <field name="name">Merge Branches</field>
+        <field name="res_model">ivcs.merge.branches.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="action_rebase_branch_wizard" model="ir.actions.act_window">
+        <field name="name">Rebase Branch</field>
+        <field name="res_model">ivcs.rebase.branch.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+=== ./ivcs_git/views/merge_branches_wizard_view.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_merge_branches_wizard_form" model="ir.ui.view">
+        <field name="name">ivcs.merge.branches.wizard.form</field>
+        <field name="model">ivcs.merge.branches.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Merge Branches">
+                <group>
+                    <field name="item_id" invisible="1"/>
+                    <field name="source_branch"/>
+                    <field name="target_branch"/>
+                </group>
+                <footer>
+                    <button name="action_merge_branches" string="Merge Branches" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=== ./ivcs_git/data/ir_cron_data.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_ivcs_sync" model="ir.cron">
+            <field name="name">IVCS: Sync Repositories</field>
+            <field name="model_id" ref="model_ivcs_item"/>
+            <field name="state">code</field>
+            <field name="code">model._sync_repositories()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+    </data>
+</odoo>
+=== ./ivcs_git/models/ivcs_metadata.py ===
+from odoo import models, fields
+
+class IVCSMetadata(models.Model):
+    _name = 'ivcs.metadata'
+    _description = 'IVCS Metadata'
+
+    item_id = fields.Many2one('ivcs.item', string='Item')
+    version_id = fields.Many2one('ivcs.version', string='Version')
+    key = fields.Char('Key', required=True)
+    value = fields.Text('Value', required=True)
+=== ./ivcs_git/models/res_config_settings.py ===
+from odoo import fields, models
+
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
+
+    ivcs_repo_base_path = fields.Char('IVCS Repository Base Path', config_parameter='ivcs.repo_base_path')
+    github_token = fields.Char(string="GitHub Token", config_parameter='ivcs_git.github_token')
+=== ./ivcs_git/models/ivcs_workflow.py ===
+from odoo import models, fields, api
+from odoo.exceptions import UserError
+
+class IVCSWorkflow(models.Model):
+    _name = 'ivcs.workflow'
+    _description = 'IVCS Workflow'
+
+    name = fields.Char('Workflow Name', required=True)
+    description = fields.Text('Description')
+    stage_ids = fields.One2many('ivcs.workflow.stage', 'workflow_id', string='Stages')
+
+class IVCSWorkflowStage(models.Model):
+    _name = 'ivcs.workflow.stage'
+    _description = 'IVCS Workflow Stage'
+    _order = 'sequence'
+
+    name = fields.Char('Stage Name', required=True)
+    workflow_id = fields.Many2one('ivcs.workflow', string='Workflow', required=True)
+    sequence = fields.Integer('Sequence', default=10)
+
+class IVCSItemWorkflow(models.Model):
+    _name = 'ivcs.item.workflow'
+    _description = 'IVCS Item Workflow'
+
+    item_id = fields.Many2one('ivcs.item', string='Item', required=True)
+    workflow_id = fields.Many2one('ivcs.workflow', string='Workflow', required=True)
+    current_stage_id = fields.Many2one('ivcs.workflow.stage', string='Current Stage')
+
+    def move_to_next_stage(self):
+        self.ensure_one()
+        current_sequence = self.current_stage_id.sequence
+        next_stage = self.workflow_id.stage_ids.filtered(lambda s: s.sequence > current_sequence)
+        if next_stage:
+            self.current_stage_id = next_stage[0]
+        else:
+            raise UserError("This item is already at the final stage of the workflow.")
+=== ./ivcs_git/models/ivcs_commit.py ===
+# File: odoo_custom_addons/ivcs_git/models/ivcs_commit.py
+
+from odoo import models, fields, api
+
+class IVCSCommit(models.Model):
+    _name = 'ivcs.commit'
+    _description = 'IVCS Commit'
+
+    item_id = fields.Many2one('ivcs.item', string='IVCS Item', required=True)
+    message = fields.Text('Commit Message', required=True)
+    commit_hash = fields.Char('Commit Hash', required=True)
+    branch = fields.Char('Branch', required=True)
+    timestamp = fields.Datetime('Timestamp', default=fields.Datetime.now, readonly=True)
+=== ./ivcs_git/models/ivcs_version.py ===
+from odoo import models, fields, api
+from odoo.exceptions import UserError
+import git
+import os
+
+class IVCSVersion(models.Model):
+    _name = 'ivcs.version'
+    _description = 'IVCS Version'
+
+    name = fields.Char('Version Name', required=True)
+    description = fields.Text('Description')
+    item_id = fields.Many2one('ivcs.item', string='Item', required=True)
+    parent_id = fields.Many2one('ivcs.version', string='Parent Version')
+    commit_hash = fields.Char('Commit Hash', readonly=True)
+    create_date = fields.Datetime('Created On', readonly=True, default=fields.Datetime.now)
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('released', 'Released'),
+        ('deprecated', 'Deprecated')
+    ], string='Status', default='draft')
+    metadata_ids = fields.One2many('ivcs.metadata', 'version_id', string='Metadata')
+
+    @api.model
+    def create(self, vals):
+        version = super(IVCSVersion, self).create(vals)
+        version._create_commit()
+        return version
+
+    def _create_commit(self):
+        repo = git.Repo(self.item_id.repo_path)
+        readme_path = os.path.join(self.item_id.repo_path, 'README.md')
+        with open(readme_path, 'w') as f:
+            f.write(f"# {self.item_id.name} - {self.name}\n\n{self.description}")
+        repo.index.add(['README.md'])
+        commit = repo.index.commit(f"Version {self.name}: {self.description}")
+        self.commit_hash = commit.hexsha
+
+    def release_version(self):
+        self.ensure_one()
+        if self.state != 'draft':
+            raise UserError("Only draft versions can be released.")
+        self.state = 'released'
+
+    def deprecate_version(self):
+        self.ensure_one()
+        if self.state != 'released':
+            raise UserError("Only released versions can be deprecated.")
+        self.state = 'deprecated'
+=== ./ivcs_git/models/__init__.py ===
+from . import ivcs_item
+from . import ivcs_version
+from . import ivcs_metadata
+from . import ivcs_file
+from . import ivcs_workflow
+from . import res_config_settings
+from . import ivcs_commit
+=== ./ivcs_git/models/ivcs_item.py ===
+from odoo import _, models, fields, api
+from odoo.exceptions import UserError
+import git
+import os
+import logging
+import uuid
+import json
+from datetime import datetime
+from difflib import unified_diff
+
+_logger = logging.getLogger(__name__)
+
+class IVCSItem(models.Model):
+    _name = 'ivcs.item'
+    _description = 'IVCS Item'
+
+    name = fields.Char('Name', required=True)
+    description = fields.Text('Description')
+    current_version_id = fields.Many2one('ivcs.version', string='Current Version')
+    version_ids = fields.One2many('ivcs.version', 'item_id', string='Versions')
+    metadata_ids = fields.One2many('ivcs.metadata', 'item_id', string='Metadata')
+    repo_path = fields.Char('Repository Path', compute='_compute_repo_path')
+    current_branch = fields.Char('Current Branch', default='main')
+    commit_ids = fields.One2many('ivcs.commit', 'item_id', string='Commits')
+
+    @api.depends('name')
+    def _compute_repo_path(self):
+        for item in self:
+            item.repo_path = os.path.join(self.env['ir.config_parameter'].sudo().get_param('ivcs.repo_base_path', '/opt/ivcs_repos'), f"item_{item.id}")
+
+    def _initialize_repository(self):
+        if not os.path.exists(self.repo_path):
+            os.makedirs(self.repo_path)
+            repo = git.Repo.init(self.repo_path)
+            readme_path = os.path.join(self.repo_path, 'README.md')
+            with open(readme_path, 'w') as f:
+                f.write(f"# {self.name}\n\n{self.description}")
+            repo.index.add(['README.md'])
+            repo.index.commit("Initial commit")
+            self._create_initial_version()
+            self._create_commit("Initial commit")
+
+    def _create_commit(self, message):
+        commit = self.env['ivcs.commit'].create({
+            'item_id': self.id,
+            'message': message,
+            'branch': self.current_branch,
+            'commit_hash': self._get_latest_commit_hash(),
+        })
+        return commit
+
+    def _get_latest_commit_hash(self):
+        repo = git.Repo(self.repo_path)
+        return repo.head.commit.hexsha
+
+    def create_branch(self, branch_name):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        current_branch = repo.active_branch.name
+        if branch_name not in repo.heads:
+            repo.create_head(branch_name)
+            self.current_branch = branch_name
+            repo.git.checkout(branch_name)
+            self._create_git_event('branch', branch_name=branch_name)
+            return self._return_success('Branch Created', f'Branch {branch_name} has been created and checked out.')
+        else:
+            return self._return_warning('Branch Exists', f'Branch {branch_name} already exists.')
+
+    def switch_branch(self, branch_name):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        if branch_name in repo.heads:
+            repo.git.checkout(branch_name)
+            self.current_branch = branch_name
+            return self._return_success('Branch Switched', f'Switched to branch: {branch_name}')
+        else:
+            return self._return_warning('Branch Not Found', f'Branch {branch_name} does not exist.')
+
+    def merge_branches(self, source_branch, target_branch):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        if source_branch not in repo.heads or target_branch not in repo.heads:
+            return self._return_error('Branch Not Found', 'One or both branches do not exist.')
+
+        current_branch = repo.active_branch.name
+        repo.git.checkout(target_branch)
+        try:
+            repo.git.merge(source_branch)
+            merge_commit = self._create_commit(f"Merge {source_branch} into {target_branch}")
+            self._create_git_event('merge', source_branch=source_branch, target_branch=target_branch)
+            return self._return_success('Branches Merged', f'Branch {source_branch} has been merged into {target_branch}.')
+        except git.GitCommandError as e:
+            if 'CONFLICT' in str(e):
+                return self._return_warning('Merge Conflict', f'There are conflicts merging {source_branch} into {target_branch}. Please resolve conflicts manually.')
+            else:
+                return self._return_error('Merge Failed', str(e))
+        finally:
+            repo.git.checkout(current_branch)
+
+    def rebase_branch(self, branch_name, onto_branch):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        if branch_name not in repo.heads or onto_branch not in repo.heads:
+            return self._return_error('Branch Not Found', 'One or both branches do not exist.')
+
+        current_branch = repo.active_branch.name
+        try:
+            repo.git.checkout(branch_name)
+            repo.git.rebase(onto_branch)
+            self._create_commit(f"Rebased {branch_name} onto {onto_branch}")
+            return self._return_success('Rebase Completed', f'Successfully rebased {branch_name} onto {onto_branch}.')
+        except git.GitCommandError as e:
+            if 'CONFLICT' in str(e):
+                return self._return_warning('Rebase Conflict', f'There are conflicts rebasing {branch_name} onto {onto_branch}. Please resolve conflicts manually.')
+            else:
+                return self._return_error('Rebase Failed', str(e))
+        finally:
+            repo.git.checkout(current_branch)
+
+    def generate_diff(self, file_path, old_commit, new_commit):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        try:
+            old_content = repo.git.show(f'{old_commit}:{file_path}')
+            new_content = repo.git.show(f'{new_commit}:{file_path}')
+            diff = list(unified_diff(
+                old_content.splitlines(keepends=True),
+                new_content.splitlines(keepends=True),
+                fromfile=f'a/{file_path}',
+                tofile=f'b/{file_path}'
+            ))
+            return ''.join(diff)
+        except git.GitCommandError as e:
+            _logger.error(f"Failed to generate diff: {str(e)}")
+            return None
+
+    def handle_merge_conflict(self, file_path):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        try:
+            with open(os.path.join(self.repo_path, file_path), 'r') as f:
+                content = f.read()
+            return content
+        except Exception as e:
+            _logger.error(f"Failed to read conflicted file: {str(e)}")
+            return None
+
+    def action_create_file(self):
+        self.ensure_one()
+        return {
+            'name': _('Create File'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ivcs.create.file.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_item_id': self.id},
+        }
+
+    def _create_git_event(self, event_type, **kwargs):
+        nostr_event_manager = self.env['nostr.event.manager']
+        if event_type == 'commit':
+            event = nostr_event_manager.create_git_event(self.repo_path, kwargs.get('commit_hash'))
+        elif event_type == 'branch':
+            event = nostr_event_manager.create_branch_event(self.repo_path, kwargs.get('branch_name'))
+        elif event_type == 'merge':
+            event = nostr_event_manager.create_merge_event(self.repo_path, kwargs.get('source_branch'), kwargs.get('target_branch'))
+        elif event_type == 'tag':
+            event = nostr_event_manager.create_tag_event(self.repo_path, kwargs.get('tag_name'), kwargs.get('tag_message'))
+        else:
+            raise UserError(_("Unsupported git event type"))
+        
+        nostr_event_manager.publish_event(event)
+
+    def create_file(self, filename, content):
+        self.ensure_one()
+        file_path = os.path.join(self.repo_path, filename)
+        
+        if os.path.exists(file_path):
+            raise UserError(_("A file with this name already exists."))
+        
+        try:
+            with open(file_path, 'w') as f:
+                f.write(content)
+            
+            repo = git.Repo(self.repo_path)
+            repo.index.add([filename])
+            commit = repo.index.commit(f"Add new file: {filename}")
+            
+            # Create and publish Nostr event for the commit
+            self._create_git_event('commit', commit_hash=str(commit.hexsha))
+            
+            # Sync with remote repository
+            self.sync_repository()
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _("File Created"),
+                    'message': _("File %s has been created and committed.") % filename,
+                    'type': 'success',
+                }
+            }
+        except Exception as e:
+            _logger.error(f"Failed to create file: {str(e)}")
+            raise UserError(_("Failed to create file: %s") % str(e))
+    
+    @api.model
+    def create(self, vals):
+        item = super(IVCSItem, self).create(vals)
+        item._initialize_repository()
+        return item
+
+    def verify_remote_url(self):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        remote_url = repo.remotes.origin.url
+        
+        # Remove any existing token from the URL
+        from urllib.parse import urlparse, urlunparse
+        parsed_url = urlparse(remote_url)
+        clean_url = urlunparse(parsed_url._replace(netloc=parsed_url.netloc.split('@')[-1]))
+    
+        # Update the remote URL without the token
+        repo.remotes.origin.set_url(clean_url)
+        
+        _logger.info(f"Verified remote URL: {clean_url}")
+        return self._return_success('Remote URL Verified', 'The remote URL has been verified and updated if necessary.')
+
+    def _create_initial_version(self):
+        version = self.env['ivcs.version'].create({
+            'item_id': self.id,
+            'name': 'v1.0',
+            'description': 'Initial version',
+        })
+        self.current_version_id = version.id
+
+    def setup_git_auth(self):
+        git_token = self.env['ir.config_parameter'].sudo().get_param('ivcs_git.github_token')
+        if not git_token:
+            raise UserError(_("GitHub token not configured. Please set it in the settings."))
+        
+        repo = git.Repo(self.repo_path)
+        with repo.config_writer() as git_config:
+            git_config.set_value('user', 'name', 'Odoo IVCS')
+            git_config.set_value('user', 'email', 'odoo@example.com')
+        
+        remote_url = repo.remotes.origin.url
+        if not remote_url.startswith('https://'):
+            raise UserError(_("Remote URL is not using HTTPS. Please update the remote URL."))
+        
+        # Parse the existing URL
+        from urllib.parse import urlparse, urlunparse
+        parsed_url = urlparse(remote_url)
+        
+        # Reconstruct the URL with the token
+        new_netloc = f"{git_token}@{parsed_url.netloc}"
+        new_url = urlunparse(parsed_url._replace(netloc=new_netloc))
+        
+        # Set the new URL for the origin remote
+        repo.remotes.origin.set_url(new_url)
+        
+        # Log the URL (without the token) for debugging
+        _logger.info(f"Updated remote URL: https://{parsed_url.netloc}{parsed_url.path}")
+    
+    @api.model
+    def _sync_repositories(self):
+        items = self.search([])
+        for item in items:
+            repo = git.Repo(item.repo_path)
+            try:
+                repo.remotes.origin.pull()
+                _logger.info(f"Successfully synced repository for item {item.name}")
+            except Exception as e:
+                _logger.error(f"Failed to sync repository for item {item.name}: {str(e)}")
+
+    def sync_repository(self):
+        self.ensure_one()
+        self.verify_remote_url()
+        self.setup_git_auth()
+        try:
+            repo = git.Repo(self.repo_path)
+            if not repo.remotes:
+                return self._return_warning('No Remote Repository', 'This repository does not have a remote configured. Please add a remote repository first.')
+            
+            origin = repo.remotes.origin
+            if not origin.exists():
+                return self._return_warning('Remote Not Found', 'The remote "origin" does not exist. Please configure the remote repository.')
+            
+            # Fetch the latest changes
+            origin.fetch()
+            
+            # Get the current branch name
+            current_branch = str(repo.active_branch)
+            
+            # Check if the remote branch exists
+            remote_branch = f'origin/{current_branch}'
+            if remote_branch not in [str(ref) for ref in repo.references]:
+                # If remote branch doesn't exist, push the current branch to create it
+                origin.push(current_branch)
+                return self._return_success('Branch Created', f'The branch "{current_branch}" has been created on the remote repository.')
+            
+            # Check if we need to pull changes
+            if repo.is_dirty() or repo.untracked_files:
+                # There are local changes, commit them first
+                repo.git.add(A=True)
+                repo.index.commit("Local changes before sync")
+            
+            # Pull changes
+            origin.pull(current_branch)
+            
+            # Push any local commits
+            origin.push(current_branch)
+            
+            self._create_git_event('commit', commit_hash=str(repo.head.commit.hexsha))
+            
+            return self._return_success('Repository Synced', 'The repository has been successfully synced.')
+        except git.GitCommandError as e:
+            _logger.error(f"Git command error: {str(e)}")
+            return self._return_error('Sync Failed', f'Git command error: {str(e)}')
+        except ValueError as e:
+            _logger.error(f"Value error: {str(e)}")
+            return self._return_error('Sync Failed', f'Value error: {str(e)}')
+        except Exception as e:
+            _logger.error(f"Error syncing repository: {str(e)}")
+            return self._return_error('Sync Failed', f'An unexpected error occurred: {str(e)}')
+
+    def _return_warning(self, title, message):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _(title),
+                'message': _(message),
+                'type': 'warning',
+            }
+        }
+
+    def _return_success(self, title, message):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _(title),
+                'message': _(message),
+                'type': 'success',
+            }
+        }
+
+    def _return_error(self, title, message):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _(title),
+                'message': _(message),
+                'type': 'danger',
+            }
+        }
+
+    def setup_git_auth(self):
+        git_token = self.env['ir.config_parameter'].sudo().get_param('ivcs_git.github_token')
+        if not git_token:
+            raise UserError(_("GitHub token not configured. Please set it in the settings."))
+        
+        repo = git.Repo(self.repo_path)
+        with repo.config_writer() as git_config:
+            git_config.set_value('user', 'name', 'Odoo IVCS')
+            git_config.set_value('user', 'email', 'odoo@example.com')
+        
+        remote_url = repo.remotes.origin.url
+        if not remote_url.startswith('https://'):
+            raise UserError(_("Remote URL is not using HTTPS. Please update the remote URL."))
+        
+        new_url = f'https://{git_token}@' + remote_url[8:]
+        repo.remotes.origin.set_url(new_url)
+
+    def action_open_create_branch_wizard(self):
+        self.ensure_one()
+        return {
+            'name': _('Create Branch'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ivcs.create.branch.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_item_id': self.id},
+        }
+
+    def add_remote(self, remote_url, remote_name='origin'):
+        self.ensure_one()
+        try:
+            repo = git.Repo(self.repo_path)
+            if remote_name in repo.remotes:
+                repo.delete_remote(remote_name)
+            repo.create_remote(remote_name, remote_url)
+            return self._return_success('Remote Added', 'Remote repository has been added successfully.')
+        except Exception as e:
+            return self._return_error('Failed to Add Remote', f'An error occurred while adding the remote: {str(e)}')
+
+    def action_open_add_remote_wizard(self):
+        self.ensure_one()
+        return {
+            'name': _('Add Remote Repository'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ivcs.add.remote.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_item_id': self.id},
+        }
+
+    def create_branch(self, branch_name):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        repo.git.checkout('-b', branch_name)
+        self._create_git_event('branch', branch_name=branch_name)
+        return self._return_success('Branch Created', f'Branch {branch_name} has been created.')
+
+    def merge_branches(self, source_branch, target_branch):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        repo.git.checkout(target_branch)
+        repo.git.merge(source_branch)
+        self._create_git_event('merge', source_branch=source_branch, target_branch=target_branch)
+        return self._return_success('Branches Merged', f'Branch {source_branch} has been merged into {target_branch}.')
+
+    def create_tag(self, tag_name, tag_message):
+        self.ensure_one()
+        repo = git.Repo(self.repo_path)
+        repo.create_tag(tag_name, message=tag_message)
+        self._create_git_event('tag', tag_name=tag_name, tag_message=tag_message)
+        return self._return_success('Tag Created', f'Tag {tag_name} has been created.')
+
+
+=== ./ivcs_git/models/ivcs_file.py ===
+from odoo import models, fields, api
+import base64
+import os
+import git
+
+class IVCSFile(models.Model):
+    _name = 'ivcs.file'
+    _description = 'IVCS File'
+
+    name = fields.Char('File Name', required=True)
+    item_id = fields.Many2one('ivcs.item', string='Item', required=True)
+    version_id = fields.Many2one('ivcs.version', string='Version', required=True)
+    file_content = fields.Binary('File Content', attachment=True)
+    file_type = fields.Selection([
+        ('text', 'Text'),
+        ('binary', 'Binary')
+    ], string='File Type', required=True)
+
+    @api.model
+    def create(self, vals):
+        file = super(IVCSFile, self).create(vals)
+        file._add_to_repository()
+        return file
+
+    def _add_to_repository(self):
+        repo = git.Repo(self.item_id.repo_path)
+        file_path = os.path.join(self.item_id.repo_path, self.name)
+        
+        if self.file_type == 'text':
+            content = base64.b64decode(self.file_content).decode('utf-8')
+            with open(file_path, 'w') as f:
+                f.write(content)
+        else:
+            content = base64.b64decode(self.file_content)
+            with open(file_path, 'wb') as f:
+                f.write(content)
+
+        repo.index.add([self.name])
+        commit = repo.index.commit(f"Add file: {self.name}")
+        self.version_id.commit_hash = commit.hexsha
+=== ./ivcs_git/__manifest__.py ===
+{
+    'name': 'Integrated Version Control System with Git',
+    'version': '1.1',
+    'category': 'Tools',
+    'summary': 'Git-based version control system integrated with Odoo',
+    'depends': ['base', 'mail'],
+    'data': [
+        'security/ir.model.access.csv',
+        'wizards/create_version_wizard_view.xml',
+        'wizards/add_remote_wizard_view.xml',
+        'wizards/create_file_wizard_view.xml',
+        'wizards/create_branch_wizard_view.xml',
+        'wizards/switch_branch_wizard_view.xml',
+        'wizards/merge_branches_wizard_view.xml',
+        'wizards/rebase_branch_wizard_view.xml',
+        'views/ivcs_wizard_actions.xml',
+        'views/ivcs_item_views.xml',
+        'views/ivcs_version_views.xml',
+        'views/ivcs_workflow_views.xml',
+        'views/res_config_settings_views.xml',
+        'views/ivcs_commit_views.xml',
+        'data/ir_cron_data.xml',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

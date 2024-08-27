@@ -1,11 +1,13 @@
 const express = require('express');
 const { exec } = require('child_process');
+const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const unzipper = require('unzipper');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const REPO_URL = 'https://github.com/scsibug/nostr-rs-relay/archive/refs/heads/master.zip';
@@ -58,9 +60,9 @@ async function downloadAndExtractRelay() {
 function buildAndSetupRelay(port) {
   return new Promise((resolve, reject) => {
     const commands = [
-      'podman build --pull -t nostr-rs-relay .',
+      'sudo podman build --pull -t nostr-rs-relay .',
       'mkdir -p data',
-      `podman run -d -p ${port}:8080 --user=100:100 -v $(pwd)/data:/usr/src/app/db:Z -v $(pwd)/config.toml:/usr/src/app/config.toml:ro,Z --name nostr-relay nostr-rs-relay:latest`
+      `sudo podman run -d -p ${port}:8090 --user=100:100 -v $(pwd)/data:/usr/src/app/db:Z -v $(pwd)/config.toml:/usr/src/app/config.toml:ro,Z --name nostr-relay nostr-rs-relay:latest`
     ];
 
     const executeCommands = (index) => {

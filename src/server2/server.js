@@ -11,7 +11,6 @@ const app = express();
 
 // Enable CORS for all routes
 app.use(cors());
-
 app.use(express.json());
 
 // ... rest of your server.js code ...
@@ -82,8 +81,8 @@ async function downloadAndExtractRelay() {
 function buildAndSetupRelay(port) {
   return new Promise((resolve, reject) => {
     const commands = [
-      'podman build --pull -t nostr-rs-relay .',
-      `podman run -d -p ${port}:8080 --user=100:100 -v "${RELAY_DIR}/data:/usr/src/app/db:Z" -v "${RELAY_DIR}/config.toml:/usr/src/app/config.toml:ro,Z" --name nostr-relay nostr-rs-relay:latest`
+      'sudo podman build --pull -t nostr-rs-relay .',
+      `sudo podman run -d -p ${port}:8080 --user=100:100 -v "${RELAY_DIR}/data:/usr/src/app/db:Z" -v "${RELAY_DIR}/config.toml:/usr/src/app/config.toml:ro,Z" --name nostr-relay nostr-rs-relay:latest`
     ];
 
     const executeCommands = (index) => {
@@ -112,12 +111,11 @@ function buildAndSetupRelay(port) {
 function setupNoscl(nostrKey, port) {
   return new Promise((resolve, reject) => {
     const commands = [
-      `noscl setprivate ${nostrKey}`,
-      `noscl relay add ws://localhost:${port}`,
-      `noscl relay`,
-      `curl -v http://localhost:${port}`,
-      `ping -n 11 127.0.0.1 > nul`,  // Add a delay to allow the relay to start up
-      `noscl publish "Wow"`
+      `./noscl-master/noscl setprivate ${nostrKey}`,
+      `./noscl-master/noscl relay add ws://172.17.0.1:${port}`,
+      `./noscl-master/noscl relay`,
+      `ping google.com -c 5`,  // Add a delay to allow the relay to start up
+      `./noscl-master/noscl publish "Wow"`
     ];
 
     const executeCommands = (index) => {
@@ -160,7 +158,7 @@ function checkRelayStatus(port) {
     let attempts = 0;
 
     const check = () => {
-      const ws = new WebSocket(`ws://localhost:${port}`);
+      const ws = new WebSocket(`ws://172.17.0.1:${port}`);
 
       ws.on('open', () => {
         console.log('WebSocket connection established');
@@ -192,5 +190,5 @@ function checkRelayStatus(port) {
   });
 }
 
-const EXPRESS_PORT = process.env.EXPRESS_PORT || 5001;
+const EXPRESS_PORT = process.env.EXPRESS_PORT || 5000;
 app.listen(EXPRESS_PORT, () => console.log(`Express server running on port ${EXPRESS_PORT}`));

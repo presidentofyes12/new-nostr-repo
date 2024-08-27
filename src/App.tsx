@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useEffect, useState } from 'react';
 import { Router, navigate } from '@reach/router';
 import { useAtom } from 'jotai';
@@ -31,6 +33,8 @@ import OtherPage from 'views/lock/OtherPage';
 import Proposal from 'views/proposal';
 import NostrRelaySetup from 'views/components/relay';
 
+import { getCredentials, getKeys } from 'local-storage';
+
 import MarketplacePage from './views/components/marketplace/MarketplacePage';
 import StallDetail from './views/components/marketplace/StallDetail';
 import ProductDetail from './views/components/marketplace/ProductDetail';
@@ -46,18 +50,27 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const auth = window.localStorage.getItem('auth') === 'true';
-    const initLock = window.localStorage.getItem('initLock') === 'true';
+    const checkAuth = async () => {
+      const credentials = await getCredentials();
+      const keys = await getKeys();
+      setIsAuthenticated(!!credentials && !!keys);
+      setIsLoading(false);
+    };
 
-    setIsAuthenticated(auth);
-    setIsLockInitialized(initLock);
-
-    if (!auth) {
-      navigate('/login');
-    }
-
-    setIsLoading(false);
+    checkAuth();
   }, []);
+
+useEffect(() => {
+  const checkLockState = () => {
+    const isLocked = localStorage.getItem('isLocked') === 'true';
+    if (isLocked && window.location.pathname !== '/lock') {
+      window.location.href = '/lock';
+    }
+  };
+
+  window.addEventListener('popstate', checkLockState);
+  return () => window.removeEventListener('popstate', checkLockState);
+}, []);
 
   return (
     <>

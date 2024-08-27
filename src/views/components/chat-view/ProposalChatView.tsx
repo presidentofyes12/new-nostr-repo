@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useAtom } from 'jotai';

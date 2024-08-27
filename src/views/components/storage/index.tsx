@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Box, TextField, Button, List, ListItem, ListItemText, Typography, Select, MenuItem, FormControl, InputLabel, CircularProgress } from '@mui/material';

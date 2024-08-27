@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState } from 'react';
 import { Button, TextField, Typography, Box, CircularProgress } from '@mui/material';
 import { toast } from 'react-toastify';
@@ -12,7 +14,7 @@ const handleSetupRelay = async () => {
   setIsLoading(true);
   try {
     console.log('Sending setup request to server...');
-    const response = await axios.post('http://localhost:5001/api/setup-relay', { port: '8080', nostrKey });
+    const response = await axios.post('http://172.17.0.1:5000/api/setup-relay', { port: '8080', nostrKey });
     console.log('Server response:', response.data);
     if (response.data.success) {
       toast.success('Nostr relay and OpenVPN setup completed successfully');

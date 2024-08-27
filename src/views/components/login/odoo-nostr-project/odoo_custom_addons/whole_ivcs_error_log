@@ -1,0 +1,1306 @@
+impromise@impromise-OptiPlex-990:~/Downloads/Telegram Desktop/nostr-w-relay-main (2)/nostr-w-relay-main/src/views/components/login/odoo-nostr-project$ echo $(sudo docker logs odoo-nostr-project-odoo-1) >> test.txt
+2024-08-26 01:50:53,618 1 WARNING ? py.warnings: /opt/odoo/odoo/odoo/tools/config.py:566: DeprecationWarning: The longpolling-port is a deprecated alias to the gevent-port option, please use the latter.
+  File "/opt/odoo/odoo/odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "/opt/odoo/odoo/odoo/cli/command.py", line 66, in main
+    o.run(args)
+  File "/opt/odoo/odoo/odoo/cli/server.py", line 185, in run
+    main(args)
+  File "/opt/odoo/odoo/odoo/cli/server.py", line 132, in main
+    odoo.tools.config.parse_config(args)
+  File "/opt/odoo/odoo/odoo/tools/config.py", line 379, in parse_config
+    self._warn_deprecated_options()
+  File "/opt/odoo/odoo/odoo/tools/config.py", line 566, in _warn_deprecated_options
+    warnings.warn(
+ 
+2024-08-26 01:50:53,619 1 INFO ? odoo: Odoo version 16.0 
+2024-08-26 01:50:53,619 1 INFO ? odoo: Using configuration file at /etc/odoo/odoo.conf 
+2024-08-26 01:50:53,619 1 INFO ? odoo: addons paths: ['/opt/odoo/odoo/odoo/addons', '/opt/odoo/.local/share/Odoo/addons/16.0', '/opt/odoo/odoo/addons', '/opt/odoo/custom_addons'] 
+2024-08-26 01:50:53,619 1 INFO ? odoo: database: odoo@postgres:5432 
+2024-08-26 01:50:53,954 1 INFO ? odoo.addons.base.models.ir_actions_report: You need Wkhtmltopdf to print a pdf version of the reports. 
+2024-08-26 01:50:54,418 1 INFO ? odoo.service.server: HTTP service (werkzeug) running on 0.0.0.0:8069 
+2024-08-26 01:50:54,442 1 INFO ? odoo.modules.loading: init db 
+2024-08-26 01:50:54,899 1 WARNING ? odoo.modules.module: Missing `license` key in manifest for 'custom_auth', defaulting to LGPL-3 
+2024-08-26 01:50:55,107 1 WARNING ? odoo.modules.module: Missing `license` key in manifest for 'ivcs_git', defaulting to LGPL-3 
+2024-08-26 01:50:55,518 1 WARNING ? odoo.modules.module: Missing `license` key in manifest for 'nostr_auth', defaulting to LGPL-3 
+2024-08-26 01:50:56,093 1 INFO odoodb odoo.modules.loading: loading 1 modules... 
+2024-08-26 01:50:56,094 1 INFO odoodb odoo.modules.loading: Loading module base (1/1) 
+2024-08-26 01:50:56,125 1 INFO odoodb odoo.modules.registry: module base: creating or updating database tables 
+2024-08-26 01:50:58,234 1 INFO odoodb odoo.models: Prepare computation of ir.module.module.menus_by_module 
+2024-08-26 01:50:58,235 1 INFO odoodb odoo.models: Prepare computation of ir.module.module.reports_by_module 
+2024-08-26 01:50:58,235 1 INFO odoodb odoo.models: Prepare computation of ir.module.module.views_by_module 
+2024-08-26 01:50:59,161 1 INFO odoodb odoo.models: Prepare computation of res.partner.user_id 
+2024-08-26 01:50:59,162 1 INFO odoodb odoo.models: Prepare computation of res.partner.commercial_partner_id 
+2024-08-26 01:50:59,162 1 INFO odoodb odoo.models: Prepare computation of res.partner.display_name 
+2024-08-26 01:50:59,162 1 INFO odoodb odoo.models: Prepare computation of res.partner.company_registry 
+2024-08-26 01:50:59,162 1 INFO odoodb odoo.models: Prepare computation of res.partner.commercial_company_name 
+2024-08-26 01:50:59,162 1 INFO odoodb odoo.models: Prepare computation of res.partner.partner_share 
+2024-08-26 01:50:59,488 1 INFO odoodb odoo.models: Prepare computation of res.currency.decimal_places 
+2024-08-26 01:50:59,604 1 INFO odoodb odoo.models: Prepare computation of res.company.logo_web 
+2024-08-26 01:50:59,727 1 INFO odoodb odoo.models: Prepare computation of res.users.signature 
+2024-08-26 01:50:59,727 1 INFO odoodb odoo.models: Prepare computation of res.users.share 
+2024-08-26 01:51:03,050 1 INFO odoodb odoo.modules.loading: loading base/data/res_bank.xml 
+2024-08-26 01:51:03,057 1 INFO odoodb odoo.modules.loading: loading base/data/res.lang.csv 
+2024-08-26 01:51:03,113 1 INFO odoodb odoo.modules.loading: loading base/data/res_lang_data.xml 
+2024-08-26 01:51:03,144 1 INFO odoodb odoo.modules.loading: loading base/data/res_partner_data.xml 
+2024-08-26 01:51:03,212 1 INFO odoodb odoo.modules.loading: loading base/data/res_currency_data.xml 
+2024-08-26 01:51:03,685 1 INFO odoodb odoo.modules.loading: loading base/data/res_company_data.xml 
+2024-08-26 01:51:03,702 1 INFO odoodb odoo.modules.loading: loading base/data/res_users_data.xml 
+2024-08-26 01:51:05,034 1 INFO odoodb odoo.modules.loading: loading base/data/report_paperformat_data.xml 
+2024-08-26 01:51:05,044 1 INFO odoodb odoo.modules.loading: loading base/data/res_country_data.xml 
+2024-08-26 01:51:05,584 1 INFO odoodb odoo.modules.loading: loading base/data/ir_demo_data.xml 
+2024-08-26 01:51:05,596 1 INFO odoodb odoo.modules.loading: loading base/data/ir_config_parameter_data.xml 
+2024-08-26 01:51:05,604 1 INFO odoodb odoo.modules.loading: loading base/security/base_groups.xml 
+2024-08-26 01:51:06,477 1 INFO odoodb odoo.modules.loading: loading base/security/base_security.xml 
+2024-08-26 01:51:06,609 1 INFO odoodb odoo.modules.loading: loading base/views/base_menus.xml 
+2024-08-26 01:51:06,700 1 INFO odoodb odoo.modules.loading: loading base/views/decimal_precision_views.xml 
+2024-08-26 01:51:06,719 1 INFO odoodb odoo.modules.loading: loading base/views/res_config_views.xml 
+2024-08-26 01:51:06,729 1 INFO odoodb odoo.modules.loading: loading base/data/res.country.state.csv 
+2024-08-26 01:51:07,474 1 INFO odoodb odoo.modules.loading: loading base/views/ir_actions_views.xml 
+2024-08-26 01:51:07,686 1 INFO odoodb odoo.modules.loading: loading base/views/ir_asset_views.xml 
+2024-08-26 01:51:07,712 1 INFO odoodb odoo.modules.loading: loading base/views/ir_config_parameter_views.xml 
+2024-08-26 01:51:07,734 1 INFO odoodb odoo.modules.loading: loading base/views/ir_cron_views.xml 
+2024-08-26 01:51:07,770 1 INFO odoodb odoo.modules.loading: loading base/views/ir_cron_trigger_views.xml 
+2024-08-26 01:51:07,794 1 INFO odoodb odoo.modules.loading: loading base/views/ir_filters_views.xml 
+2024-08-26 01:51:07,817 1 INFO odoodb odoo.modules.loading: loading base/views/ir_mail_server_views.xml 
+2024-08-26 01:51:07,842 1 INFO odoodb odoo.modules.loading: loading base/views/ir_model_views.xml 
+2024-08-26 01:51:08,026 1 INFO odoodb odoo.modules.loading: loading base/views/ir_attachment_views.xml 
+2024-08-26 01:51:08,058 1 INFO odoodb odoo.modules.loading: loading base/views/ir_rule_views.xml 
+2024-08-26 01:51:08,087 1 INFO odoodb odoo.modules.loading: loading base/views/ir_sequence_views.xml 
+2024-08-26 01:51:08,112 1 INFO odoodb odoo.modules.loading: loading base/views/ir_ui_menu_views.xml 
+2024-08-26 01:51:08,142 1 INFO odoodb odoo.modules.loading: loading base/views/ir_ui_view_views.xml 
+2024-08-26 01:51:08,203 1 INFO odoodb odoo.modules.loading: loading base/views/ir_default_views.xml 
+2024-08-26 01:51:08,226 1 INFO odoodb odoo.modules.loading: loading base/data/ir_cron_data.xml 
+2024-08-26 01:51:08,234 1 INFO odoodb odoo.modules.loading: loading base/report/ir_model_report.xml 
+2024-08-26 01:51:08,240 1 INFO odoodb odoo.modules.loading: loading base/report/ir_model_templates.xml 
+2024-08-26 01:51:08,249 1 INFO odoodb odoo.modules.loading: loading base/views/ir_logging_views.xml 
+2024-08-26 01:51:08,270 1 INFO odoodb odoo.modules.loading: loading base/views/ir_qweb_widget_templates.xml 
+2024-08-26 01:51:08,281 1 INFO odoodb odoo.modules.loading: loading base/views/ir_module_views.xml 
+2024-08-26 01:51:08,359 1 INFO odoodb odoo.modules.loading: loading base/data/ir_module_category_data.xml 
+2024-08-26 01:51:08,436 1 INFO odoodb odoo.modules.loading: loading base/data/ir_module_module.xml 
+2024-08-26 01:51:08,513 1 INFO odoodb odoo.modules.loading: loading base/report/ir_module_reports.xml 
+2024-08-26 01:51:08,518 1 INFO odoodb odoo.modules.loading: loading base/report/ir_module_report_templates.xml 
+2024-08-26 01:51:08,526 1 INFO odoodb odoo.modules.loading: loading base/wizard/base_module_update_views.xml 
+2024-08-26 01:51:08,540 1 INFO odoodb odoo.modules.loading: loading base/wizard/base_language_install_views.xml 
+2024-08-26 01:51:08,555 1 INFO odoodb odoo.modules.loading: loading base/wizard/base_import_language_views.xml 
+2024-08-26 01:51:08,569 1 INFO odoodb odoo.modules.loading: loading base/wizard/base_module_upgrade_views.xml 
+2024-08-26 01:51:08,590 1 INFO odoodb odoo.modules.loading: loading base/wizard/base_module_uninstall_views.xml 
+2024-08-26 01:51:08,598 1 INFO odoodb odoo.modules.loading: loading base/wizard/base_export_language_views.xml 
+2024-08-26 01:51:08,614 1 INFO odoodb odoo.modules.loading: loading base/wizard/base_partner_merge_views.xml 
+2024-08-26 01:51:08,631 1 INFO odoodb odoo.modules.loading: loading base/data/ir_actions_data.xml 
+2024-08-26 01:51:08,636 1 INFO odoodb odoo.modules.loading: loading base/data/ir_demo_failure_data.xml 
+2024-08-26 01:51:08,652 1 INFO odoodb odoo.modules.loading: loading base/views/ir_profile_views.xml 
+2024-08-26 01:51:08,679 1 INFO odoodb odoo.modules.loading: loading base/views/res_company_views.xml 
+2024-08-26 01:51:08,706 1 INFO odoodb odoo.modules.loading: loading base/views/res_lang_views.xml 
+2024-08-26 01:51:08,731 1 INFO odoodb odoo.modules.loading: loading base/views/res_partner_views.xml 
+2024-08-26 01:51:08,879 1 INFO odoodb odoo.modules.loading: loading base/views/res_bank_views.xml 
+2024-08-26 01:51:08,925 1 INFO odoodb odoo.modules.loading: loading base/views/res_country_views.xml 
+2024-08-26 01:51:08,991 1 INFO odoodb odoo.modules.loading: loading base/views/res_currency_views.xml 
+2024-08-26 01:51:09,047 1 INFO odoodb odoo.modules.loading: loading base/views/res_users_views.xml 
+2024-08-26 01:51:09,205 1 INFO odoodb odoo.modules.loading: loading base/views/ir_property_views.xml 
+2024-08-26 01:51:09,230 1 INFO odoodb odoo.modules.loading: loading base/views/res_config_settings_views.xml 
+2024-08-26 01:51:09,240 1 INFO odoodb odoo.modules.loading: loading base/views/report_paperformat_views.xml 
+2024-08-26 01:51:09,275 1 INFO odoodb odoo.modules.loading: loading base/views/onboarding_views.xml 
+2024-08-26 01:51:09,303 1 INFO odoodb odoo.modules.loading: loading base/security/ir.model.access.csv 
+2024-08-26 01:51:09,432 1 INFO odoodb odoo.modules.loading: Module base: loading demo 
+2024-08-26 01:51:09,432 1 INFO odoodb odoo.modules.loading: loading base/data/res_company_demo.xml 
+2024-08-26 01:51:09,444 1 INFO odoodb odoo.modules.loading: loading base/data/res_users_demo.xml 
+2024-08-26 01:51:11,106 1 INFO odoodb odoo.modules.loading: loading base/data/res_partner_bank_demo.xml 
+2024-08-26 01:51:11,114 1 INFO odoodb odoo.modules.loading: loading base/data/res_currency_rate_demo.xml 
+2024-08-26 01:51:11,461 1 INFO odoodb odoo.modules.loading: loading base/data/res_bank_demo.xml 
+2024-08-26 01:51:11,466 1 INFO odoodb odoo.modules.loading: loading base/data/res_partner_demo.xml 
+2024-08-26 01:51:11,806 1 INFO odoodb odoo.modules.loading: loading base/data/res_partner_image_demo.xml 
+2024-08-26 01:51:12,490 1 INFO odoodb odoo.modules.loading: Module base loaded in 16.40s, 9041 queries (+9041 other) 
+2024-08-26 01:51:12,490 1 INFO odoodb odoo.modules.loading: 1 modules loaded in 16.40s, 9041 queries (+9041 extra) 
+2024-08-26 01:51:12,525 1 INFO odoodb odoo.modules.loading: updating modules list 
+2024-08-26 01:51:12,526 1 INFO odoodb odoo.addons.base.models.ir_module: ALLOW access to module.update_list on [] to user __system__ #1 via n/a 
+2024-08-26 01:51:13,180 1 INFO odoodb odoo.addons.base.models.ir_module: ALLOW access to module.button_install on ['Integrated Version Control System with Git', 'Nostr Bridge'] to user __system__ #1 via n/a 
+2024-08-26 01:51:13,290 1 INFO odoodb odoo.modules.loading: loading 25 modules... 
+2024-08-26 01:51:13,291 1 INFO odoodb odoo.modules.loading: Loading module web (2/25) 
+2024-08-26 01:51:13,325 1 INFO odoodb odoo.modules.registry: module web: creating or updating database tables 
+2024-08-26 01:51:13,946 1 INFO odoodb odoo.modules.loading: loading web/security/ir.model.access.csv 
+2024-08-26 01:51:13,957 1 INFO odoodb odoo.modules.loading: loading web/views/webclient_templates.xml 
+2024-08-26 01:51:14,038 1 INFO odoodb odoo.modules.loading: loading web/views/report_templates.xml 
+2024-08-26 01:51:14,178 1 INFO odoodb odoo.modules.loading: loading web/views/base_document_layout_views.xml 
+2024-08-26 01:51:14,199 1 INFO odoodb odoo.modules.loading: loading web/views/speedscope_template.xml 
+2024-08-26 01:51:14,210 1 INFO odoodb odoo.modules.loading: loading web/views/lazy_assets.xml 
+2024-08-26 01:51:14,220 1 INFO odoodb odoo.modules.loading: loading web/views/neutralize_views.xml 
+2024-08-26 01:51:14,230 1 INFO odoodb odoo.modules.loading: loading web/data/ir_attachment.xml 
+2024-08-26 01:51:14,238 1 INFO odoodb odoo.modules.loading: loading web/data/report_layout.xml 
+2024-08-26 01:51:14,315 1 INFO odoodb odoo.modules.loading: Module web loaded in 1.02s, 882 queries (+882 other) 
+2024-08-26 01:51:14,315 1 INFO odoodb odoo.modules.loading: Loading module auth_totp (3/25) 
+2024-08-26 01:51:14,360 1 INFO odoodb odoo.modules.registry: module auth_totp: creating or updating database tables 
+2024-08-26 01:51:14,496 1 INFO odoodb odoo.modules.loading: loading auth_totp/security/security.xml 
+2024-08-26 01:51:14,530 1 INFO odoodb odoo.modules.loading: loading auth_totp/security/ir.model.access.csv 
+2024-08-26 01:51:14,543 1 INFO odoodb odoo.modules.loading: loading auth_totp/data/ir_action_data.xml 
+2024-08-26 01:51:14,552 1 INFO odoodb odoo.modules.loading: loading auth_totp/views/res_users_views.xml 
+2024-08-26 01:51:14,587 1 INFO odoodb odoo.modules.loading: loading auth_totp/views/templates.xml 
+2024-08-26 01:51:14,594 1 INFO odoodb odoo.modules.loading: loading auth_totp/wizard/auth_totp_wizard_views.xml 
+2024-08-26 01:51:14,621 1 INFO odoodb odoo.modules.loading: Module auth_totp loaded in 0.31s, 175 queries (+175 other) 
+2024-08-26 01:51:14,622 1 INFO odoodb odoo.modules.loading: Loading module base_import (4/25) 
+2024-08-26 01:51:14,673 1 INFO odoodb odoo.modules.registry: module base_import: creating or updating database tables 
+2024-08-26 01:51:16,157 1 INFO odoodb odoo.modules.loading: loading base_import/security/ir.model.access.csv 
+2024-08-26 01:51:16,288 1 INFO odoodb odoo.modules.loading: Module base_import loaded in 1.67s, 891 queries (+891 other) 
+2024-08-26 01:51:16,288 1 INFO odoodb odoo.modules.loading: Loading module base_setup (5/25) 
+2024-08-26 01:51:16,334 1 INFO odoodb odoo.modules.registry: module base_setup: creating or updating database tables 
+2024-08-26 01:51:16,416 1 INFO odoodb odoo.modules.loading: loading base_setup/data/base_setup_data.xml 
+2024-08-26 01:51:16,423 1 INFO odoodb odoo.modules.loading: loading base_setup/views/res_config_settings_views.xml 
+2024-08-26 01:51:16,468 1 INFO odoodb odoo.modules.loading: loading base_setup/views/res_partner_views.xml 
+2024-08-26 01:51:16,701 1 INFO odoodb odoo.modules.loading: Module base_setup loaded in 0.41s, 153 queries (+153 other) 
+2024-08-26 01:51:16,701 1 INFO odoodb odoo.modules.loading: Loading module bus (6/25) 
+2024-08-26 01:51:16,750 1 INFO odoodb odoo.modules.registry: module bus: creating or updating database tables 
+2024-08-26 01:51:16,897 1 INFO odoodb odoo.modules.loading: loading bus/security/ir.model.access.csv 
+2024-08-26 01:51:16,926 1 INFO odoodb odoo.modules.loading: Module bus loaded in 0.23s, 103 queries (+103 other) 
+2024-08-26 01:51:16,926 1 INFO odoodb odoo.modules.loading: Loading module web_kanban_gauge (7/25) 
+2024-08-26 01:51:17,041 1 INFO odoodb odoo.modules.loading: Module web_kanban_gauge loaded in 0.11s, 12 queries (+12 other) 
+2024-08-26 01:51:17,041 1 INFO odoodb odoo.modules.loading: Loading module web_tour (8/25) 
+2024-08-26 01:51:17,068 1 INFO odoodb odoo.modules.registry: module web_tour: creating or updating database tables 
+2024-08-26 01:51:17,215 1 INFO odoodb odoo.modules.loading: loading web_tour/security/ir.model.access.csv 
+2024-08-26 01:51:17,225 1 INFO odoodb odoo.modules.loading: loading web_tour/security/ir.rule.csv 
+2024-08-26 01:51:17,236 1 INFO odoodb odoo.modules.loading: loading web_tour/views/tour_views.xml 
+2024-08-26 01:51:17,274 1 INFO odoodb odoo.modules.loading: Module web_tour loaded in 0.23s, 101 queries (+101 other) 
+2024-08-26 01:51:17,274 1 INFO odoodb odoo.modules.loading: Loading module iap (9/25) 
+2024-08-26 01:51:17,313 1 INFO odoodb odoo.modules.registry: module iap: creating or updating database tables 
+2024-08-26 01:51:17,575 1 INFO odoodb odoo.modules.loading: loading iap/security/ir.model.access.csv 
+2024-08-26 01:51:17,587 1 INFO odoodb odoo.modules.loading: loading iap/security/ir_rule.xml 
+2024-08-26 01:51:17,596 1 INFO odoodb odoo.modules.loading: loading iap/views/iap_views.xml 
+2024-08-26 01:51:17,630 1 INFO odoodb odoo.modules.loading: loading iap/views/res_config_settings.xml 
+2024-08-26 01:51:17,693 1 INFO odoodb odoo.modules.loading: Module iap loaded in 0.42s, 147 queries (+147 other) 
+2024-08-26 01:51:17,693 1 INFO odoodb odoo.modules.loading: Loading module mail (10/25) 
+2024-08-26 01:51:18,001 1 INFO odoodb odoo.modules.registry: module mail: creating or updating database tables 
+2024-08-26 01:51:19,778 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.partner_ids 
+2024-08-26 01:51:19,779 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.template_id 
+2024-08-26 01:51:19,779 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.activity_type_id 
+2024-08-26 01:51:19,779 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.activity_date_deadline_range 
+2024-08-26 01:51:19,779 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.activity_user_id 
+2024-08-26 01:51:19,779 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.mail_post_method 
+2024-08-26 01:51:19,779 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.activity_summary 
+2024-08-26 01:51:19,780 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.activity_date_deadline_range_type 
+2024-08-26 01:51:19,780 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.activity_user_type 
+2024-08-26 01:51:19,780 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.activity_user_field_name 
+2024-08-26 01:51:19,780 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.activity_note 
+2024-08-26 01:51:19,780 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.mail_post_autofollow 
+2024-08-26 01:51:19,862 1 INFO odoodb odoo.models: Prepare computation of res.partner.email_normalized 
+2024-08-26 01:51:19,871 1 INFO odoodb odoo.models: Prepare computation of res.users.notification_type 
+2024-08-26 01:51:22,489 1 INFO odoodb odoo.modules.loading: loading mail/data/mail_groups.xml 
+2024-08-26 01:51:22,594 1 INFO odoodb odoo.modules.loading: loading mail/wizard/mail_blacklist_remove_views.xml 
+2024-08-26 01:51:22,603 1 INFO odoodb odoo.modules.loading: loading mail/wizard/mail_compose_message_views.xml 
+2024-08-26 01:51:22,624 1 INFO odoodb odoo.modules.loading: loading mail/wizard/mail_resend_message_views.xml 
+2024-08-26 01:51:22,639 1 INFO odoodb odoo.modules.loading: loading mail/wizard/mail_template_preview_views.xml 
+2024-08-26 01:51:22,653 1 INFO odoodb odoo.modules.loading: loading mail/wizard/mail_wizard_invite_views.xml 
+2024-08-26 01:51:22,665 1 INFO odoodb odoo.modules.loading: loading mail/wizard/mail_template_reset_views.xml 
+2024-08-26 01:51:22,686 1 INFO odoodb odoo.modules.loading: loading mail/views/fetchmail_views.xml 
+2024-08-26 01:51:22,721 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_message_subtype_views.xml 
+2024-08-26 01:51:22,743 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_tracking_views.xml 
+2024-08-26 01:51:22,765 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_notification_views.xml 
+2024-08-26 01:51:22,785 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_message_views.xml 
+2024-08-26 01:51:22,829 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_message_schedule_views.xml 
+2024-08-26 01:51:22,849 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_mail_views.xml 
+2024-08-26 01:51:22,886 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_followers_views.xml 
+2024-08-26 01:51:22,898 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_ice_server_views.xml 
+2024-08-26 01:51:22,911 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_channel_member_views.xml 
+2024-08-26 01:51:22,925 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_channel_rtc_session_views.xml 
+2024-08-26 01:51:22,941 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_link_preview_views.xml 
+2024-08-26 01:51:22,948 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_channel_views.xml 
+2024-08-26 01:51:22,974 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_shortcode_views.xml 
+2024-08-26 01:51:22,988 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_activity_views.xml 
+2024-08-26 01:51:23,046 1 INFO odoodb odoo.modules.loading: loading mail/views/res_config_settings_views.xml 
+2024-08-26 01:51:23,081 1 INFO odoodb odoo.modules.loading: loading mail/data/res_partner_data.xml 
+2024-08-26 01:51:23,099 1 INFO odoodb odoo.modules.loading: loading mail/data/mail_message_subtype_data.xml 
+2024-08-26 01:51:23,108 1 INFO odoodb odoo.modules.loading: loading mail/data/mail_templates_chatter.xml 
+2024-08-26 01:51:23,125 1 INFO odoodb odoo.modules.loading: loading mail/data/mail_templates_email_layouts.xml 
+2024-08-26 01:51:23,146 1 INFO odoodb odoo.modules.loading: loading mail/data/mail_templates_mailgateway.xml 
+2024-08-26 01:51:23,159 1 INFO odoodb odoo.modules.loading: loading mail/data/mail_channel_data.xml 
+2024-08-26 01:51:23,184 1 INFO odoodb odoo.modules.loading: loading mail/data/mail_activity_data.xml 
+2024-08-26 01:51:23,204 1 INFO odoodb odoo.modules.loading: loading mail/data/ir_cron_data.xml 
+2024-08-26 01:51:23,238 1 INFO odoodb odoo.modules.loading: loading mail/security/mail_security.xml 
+2024-08-26 01:51:23,340 1 INFO odoodb odoo.modules.loading: loading mail/security/ir.model.access.csv 
+2024-08-26 01:51:23,408 1 INFO odoodb odoo.modules.loading: loading mail/views/discuss_public_templates.xml 
+2024-08-26 01:51:23,419 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_alias_views.xml 
+2024-08-26 01:51:23,438 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_gateway_allowed_views.xml 
+2024-08-26 01:51:23,449 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_guest_views.xml 
+2024-08-26 01:51:23,458 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_message_reaction_views.xml 
+2024-08-26 01:51:23,466 1 INFO odoodb odoo.modules.loading: loading mail/views/res_users_views.xml 
+2024-08-26 01:51:23,484 1 INFO odoodb odoo.modules.loading: loading mail/views/res_users_settings_views.xml 
+2024-08-26 01:51:23,496 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_template_views.xml 
+2024-08-26 01:51:23,520 1 INFO odoodb odoo.modules.loading: loading mail/views/ir_actions_server_views.xml 
+2024-08-26 01:51:23,531 1 INFO odoodb odoo.modules.loading: loading mail/views/ir_model_views.xml 
+2024-08-26 01:51:23,559 1 INFO odoodb odoo.modules.loading: loading mail/views/res_partner_views.xml 
+2024-08-26 01:51:23,619 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_blacklist_views.xml 
+2024-08-26 01:51:23,636 1 INFO odoodb odoo.modules.loading: loading mail/views/mail_menus.xml 
+2024-08-26 01:51:23,745 1 INFO odoodb odoo.modules.loading: Module mail: loading demo 
+2024-08-26 01:51:23,746 1 INFO odoodb odoo.modules.loading: loading mail/data/mail_channel_demo.xml 
+2024-08-26 01:51:23,841 1 INFO odoodb odoo.modules.loading: Module mail loaded in 6.15s, 3487 queries (+3487 other) 
+2024-08-26 01:51:23,842 1 INFO odoodb odoo.modules.loading: Loading module web_editor (11/25) 
+2024-08-26 01:51:23,964 1 INFO odoodb odoo.modules.registry: module web_editor: creating or updating database tables 
+2024-08-26 01:51:24,870 1 INFO odoodb odoo.modules.loading: loading web_editor/security/ir.model.access.csv 
+2024-08-26 01:51:24,889 1 INFO odoodb odoo.modules.loading: loading web_editor/data/editor_assets.xml 
+2024-08-26 01:51:24,896 1 INFO odoodb odoo.modules.loading: loading web_editor/views/editor.xml 
+2024-08-26 01:51:24,929 1 INFO odoodb odoo.modules.loading: loading web_editor/views/snippets.xml 
+2024-08-26 01:51:25,000 1 INFO odoodb odoo.modules.loading: Module web_editor loaded in 1.16s, 1076 queries (+1076 other) 
+2024-08-26 01:51:25,000 1 INFO odoodb odoo.modules.loading: Loading module auth_signup (12/25) 
+2024-08-26 01:51:25,060 1 INFO odoodb odoo.modules.registry: module auth_signup: creating or updating database tables 
+2024-08-26 01:51:25,134 1 INFO odoodb odoo.modules.loading: loading auth_signup/data/ir_config_parameter_data.xml 
+2024-08-26 01:51:25,142 1 INFO odoodb odoo.modules.loading: loading auth_signup/data/ir_cron_data.xml 
+2024-08-26 01:51:25,153 1 INFO odoodb odoo.modules.loading: loading auth_signup/data/mail_template_data.xml 
+2024-08-26 01:51:25,170 1 INFO odoodb odoo.modules.loading: loading auth_signup/views/res_config_settings_views.xml 
+2024-08-26 01:51:25,188 1 INFO odoodb odoo.modules.loading: loading auth_signup/views/res_users_views.xml 
+2024-08-26 01:51:25,213 1 INFO odoodb odoo.modules.loading: loading auth_signup/views/auth_signup_login_templates.xml 
+2024-08-26 01:51:25,235 1 INFO odoodb odoo.modules.loading: loading auth_signup/views/webclient_templates.xml 
+2024-08-26 01:51:25,264 1 INFO odoodb odoo.modules.loading: Module auth_signup loaded in 0.26s, 191 queries (+191 other) 
+2024-08-26 01:51:25,264 1 INFO odoodb odoo.modules.loading: Loading module auth_totp_mail (13/25) 
+2024-08-26 01:51:25,309 1 INFO odoodb odoo.modules.registry: module auth_totp_mail: creating or updating database tables 
+2024-08-26 01:51:25,343 1 INFO odoodb odoo.modules.loading: loading auth_totp_mail/data/ir_action_data.xml 
+2024-08-26 01:51:25,364 1 INFO odoodb odoo.modules.loading: loading auth_totp_mail/data/mail_template_data.xml 
+2024-08-26 01:51:25,372 1 INFO odoodb odoo.modules.loading: loading auth_totp_mail/views/res_users_views.xml 
+2024-08-26 01:51:25,419 1 INFO odoodb odoo.modules.loading: Module auth_totp_mail loaded in 0.15s, 92 queries (+92 other) 
+2024-08-26 01:51:25,419 1 INFO odoodb odoo.modules.loading: Loading module base_install_request (14/25) 
+2024-08-26 01:51:25,463 1 INFO odoodb odoo.modules.registry: module base_install_request: creating or updating database tables 
+2024-08-26 01:51:25,571 1 INFO odoodb odoo.modules.loading: loading base_install_request/security/ir.model.access.csv 
+2024-08-26 01:51:25,587 1 INFO odoodb odoo.modules.loading: loading base_install_request/wizard/base_module_install_request_views.xml 
+2024-08-26 01:51:25,604 1 INFO odoodb odoo.modules.loading: loading base_install_request/data/mail_template_data.xml 
+2024-08-26 01:51:25,611 1 INFO odoodb odoo.modules.loading: loading base_install_request/data/mail_templates_module_install.xml 
+2024-08-26 01:51:25,616 1 INFO odoodb odoo.modules.loading: loading base_install_request/views/ir_module_module_views.xml 
+2024-08-26 01:51:25,643 1 INFO odoodb odoo.modules.loading: Module base_install_request loaded in 0.22s, 143 queries (+143 other) 
+2024-08-26 01:51:25,643 1 INFO odoodb odoo.modules.loading: Loading module google_gmail (15/25) 
+2024-08-26 01:51:25,688 1 INFO odoodb odoo.modules.registry: module google_gmail: creating or updating database tables 
+2024-08-26 01:51:25,754 1 INFO odoodb odoo.modules.loading: loading google_gmail/views/fetchmail_server_views.xml 
+2024-08-26 01:51:25,769 1 INFO odoodb odoo.modules.loading: loading google_gmail/views/ir_mail_server_views.xml 
+2024-08-26 01:51:25,782 1 INFO odoodb odoo.modules.loading: loading google_gmail/views/res_config_settings_views.xml 
+2024-08-26 01:51:25,829 1 INFO odoodb odoo.modules.loading: Module google_gmail loaded in 0.19s, 122 queries (+122 other) 
+2024-08-26 01:51:25,829 1 INFO odoodb odoo.modules.loading: Loading module iap_mail (16/25) 
+2024-08-26 01:51:25,869 1 INFO odoodb odoo.modules.registry: module iap_mail: creating or updating database tables 
+2024-08-26 01:51:25,890 1 INFO odoodb odoo.modules.loading: loading iap_mail/data/mail_templates.xml 
+2024-08-26 01:51:25,922 1 INFO odoodb odoo.modules.loading: Module iap_mail loaded in 0.09s, 35 queries (+35 other) 
+2024-08-26 01:51:25,922 1 INFO odoodb odoo.modules.loading: Loading module ivcs_git (17/25) 
+2024-08-26 01:51:26,011 1 WARNING odoodb odoo.api.create: The model odoo.addons.ivcs_git.models.ivcs_item is not overriding the create method in batch 
+2024-08-26 01:51:26,012 1 WARNING odoodb odoo.api.create: The model odoo.addons.ivcs_git.models.ivcs_version is not overriding the create method in batch 
+2024-08-26 01:51:26,014 1 WARNING odoodb odoo.api.create: The model odoo.addons.ivcs_git.models.ivcs_file is not overriding the create method in batch 
+2024-08-26 01:51:26,063 1 INFO odoodb odoo.modules.registry: module ivcs_git: creating or updating database tables 
+2024-08-26 01:51:26,658 1 INFO odoodb odoo.modules.loading: loading ivcs_git/security/ir.model.access.csv 
+2024-08-26 01:51:26,686 1 INFO odoodb odoo.modules.loading: loading ivcs_git/wizards/create_version_wizard_view.xml 
+2024-08-26 01:51:26,698 1 INFO odoodb odoo.modules.loading: loading ivcs_git/wizards/add_remote_wizard_view.xml 
+2024-08-26 01:51:26,709 1 INFO odoodb odoo.modules.loading: loading ivcs_git/wizards/create_file_wizard_view.xml 
+2024-08-26 01:51:26,716 1 INFO odoodb odoo.modules.loading: loading ivcs_git/wizards/create_branch_wizard_view.xml 
+2024-08-26 01:51:26,723 1 INFO odoodb odoo.modules.loading: loading ivcs_git/wizards/switch_branch_wizard_view.xml 
+2024-08-26 01:51:26,729 1 INFO odoodb odoo.modules.loading: loading ivcs_git/wizards/merge_branches_wizard_view.xml 
+2024-08-26 01:51:26,736 1 INFO odoodb odoo.modules.loading: loading ivcs_git/wizards/rebase_branch_wizard_view.xml 
+2024-08-26 01:51:26,743 1 INFO odoodb odoo.modules.loading: loading ivcs_git/views/ivcs_wizard_actions.xml 
+2024-08-26 01:51:26,755 1 INFO odoodb odoo.modules.loading: loading ivcs_git/views/ivcs_item_views.xml 
+2024-08-26 01:51:26,778 1 INFO odoodb odoo.modules.loading: loading ivcs_git/views/ivcs_version_views.xml 
+2024-08-26 01:51:26,795 1 INFO odoodb odoo.modules.loading: loading ivcs_git/views/ivcs_workflow_views.xml 
+2024-08-26 01:51:26,812 1 INFO odoodb odoo.modules.loading: loading ivcs_git/views/res_config_settings_views.xml 
+2024-08-26 01:51:26,831 1 INFO odoodb odoo.modules.loading: loading ivcs_git/views/ivcs_commit_views.xml 
+2024-08-26 01:51:26,848 1 INFO odoodb odoo.modules.loading: loading ivcs_git/data/ir_cron_data.xml 
+2024-08-26 01:51:26,882 1 INFO odoodb odoo.modules.loading: Module ivcs_git loaded in 0.96s, 541 queries (+541 other) 
+2024-08-26 01:51:26,882 1 INFO odoodb odoo.modules.loading: Loading module mail_bot (18/25) 
+2024-08-26 01:51:26,931 1 INFO odoodb odoo.modules.registry: module mail_bot: creating or updating database tables 
+2024-08-26 01:51:27,045 1 INFO odoodb odoo.modules.loading: loading mail_bot/views/res_users_views.xml 
+2024-08-26 01:51:27,081 1 INFO odoodb odoo.modules.loading: loading mail_bot/data/mailbot_data.xml 
+2024-08-26 01:51:27,089 1 INFO odoodb odoo.modules.loading: Module mail_bot: loading demo 
+2024-08-26 01:51:27,090 1 INFO odoodb odoo.modules.loading: loading mail_bot/data/mailbot_demo.xml 
+2024-08-26 01:51:27,116 1 INFO odoodb odoo.modules.loading: Module mail_bot loaded in 0.23s, 140 queries (+140 other) 
+2024-08-26 01:51:27,116 1 INFO odoodb odoo.modules.loading: Loading module nostr_bridge (19/25) 
+2024-08-26 01:51:27,269 1 WARNING odoodb odoo.api.create: The model odoo.addons.nostr_bridge.models.git_repository is not overriding the create method in batch 
+2024-08-26 01:51:27,316 1 INFO odoodb odoo.modules.registry: module nostr_bridge: creating or updating database tables 
+2024-08-26 01:51:27,445 1 INFO odoodb odoo.modules.loading: loading nostr_bridge/views/res_config_settings_views.xml 
+2024-08-26 01:51:27,465 1 INFO odoodb odoo.modules.loading: loading nostr_bridge/views/res_users_views.xml 
+2024-08-26 01:51:27,479 1 INFO odoodb odoo.modules.loading: loading nostr_bridge/views/res_partner_views.xml 
+2024-08-26 01:51:27,494 1 INFO odoodb odoo.modules.loading: loading nostr_bridge/views/git_repository_views.xml 
+2024-08-26 01:51:27,510 1 INFO odoodb odoo.modules.loading: loading nostr_bridge/security/ir.model.access.csv 
+2024-08-26 01:51:27,537 1 INFO odoodb odoo.modules.loading: Module nostr_bridge loaded in 0.42s, 192 queries (+192 other) 
+2024-08-26 01:51:27,537 1 INFO odoodb odoo.modules.loading: Loading module phone_validation (20/25) 
+2024-08-26 01:51:27,593 1 INFO odoodb odoo.modules.registry: module phone_validation: creating or updating database tables 
+2024-08-26 01:51:27,768 1 INFO odoodb odoo.modules.loading: loading phone_validation/security/ir.model.access.csv 
+2024-08-26 01:51:27,781 1 INFO odoodb odoo.modules.loading: loading phone_validation/views/phone_blacklist_views.xml 
+2024-08-26 01:51:27,810 1 INFO odoodb odoo.modules.loading: loading phone_validation/wizard/phone_blacklist_remove_view.xml 
+2024-08-26 01:51:27,834 1 INFO odoodb odoo.modules.loading: Module phone_validation loaded in 0.30s, 167 queries (+167 other) 
+2024-08-26 01:51:27,834 1 INFO odoodb odoo.modules.loading: Loading module privacy_lookup (21/25) 
+2024-08-26 01:51:27,887 1 INFO odoodb odoo.modules.registry: module privacy_lookup: creating or updating database tables 
+2024-08-26 01:51:28,151 1 INFO odoodb odoo.modules.loading: loading privacy_lookup/wizard/privacy_lookup_wizard_views.xml 
+2024-08-26 01:51:28,191 1 INFO odoodb odoo.modules.loading: loading privacy_lookup/views/privacy_log_views.xml 
+2024-08-26 01:51:28,217 1 INFO odoodb odoo.modules.loading: loading privacy_lookup/security/ir.model.access.csv 
+2024-08-26 01:51:28,233 1 INFO odoodb odoo.modules.loading: loading privacy_lookup/data/ir_actions_server_data.xml 
+2024-08-26 01:51:28,269 1 INFO odoodb odoo.modules.loading: Module privacy_lookup loaded in 0.44s, 230 queries (+230 other) 
+2024-08-26 01:51:28,269 1 INFO odoodb odoo.modules.loading: Loading module web_unsplash (22/25) 
+2024-08-26 01:51:28,334 1 INFO odoodb odoo.modules.registry: module web_unsplash: creating or updating database tables 
+2024-08-26 01:51:28,404 1 INFO odoodb odoo.modules.loading: loading web_unsplash/views/res_config_settings_view.xml 
+2024-08-26 01:51:28,461 1 INFO odoodb odoo.modules.loading: Module web_unsplash loaded in 0.19s, 95 queries (+95 other) 
+2024-08-26 01:51:28,461 1 INFO odoodb odoo.modules.loading: Loading module partner_autocomplete (23/25) 
+2024-08-26 01:51:28,521 1 INFO odoodb odoo.modules.registry: module partner_autocomplete: creating or updating database tables 
+2024-08-26 01:51:28,642 1 INFO odoodb odoo.modules.loading: loading partner_autocomplete/security/ir.model.access.csv 
+2024-08-26 01:51:28,657 1 INFO odoodb odoo.modules.loading: loading partner_autocomplete/views/res_partner_views.xml 
+2024-08-26 01:51:28,682 1 INFO odoodb odoo.modules.loading: loading partner_autocomplete/views/res_company_views.xml 
+2024-08-26 01:51:28,692 1 INFO odoodb odoo.modules.loading: loading partner_autocomplete/views/res_config_settings_views.xml 
+2024-08-26 01:51:28,712 1 INFO odoodb odoo.modules.loading: loading partner_autocomplete/data/cron.xml 
+2024-08-26 01:51:28,741 1 INFO odoodb odoo.modules.loading: Module partner_autocomplete loaded in 0.28s, 180 queries (+180 other) 
+2024-08-26 01:51:28,741 1 INFO odoodb odoo.modules.loading: Loading module sms (24/25) 
+2024-08-26 01:51:28,820 1 INFO odoodb odoo.modules.registry: module sms: creating or updating database tables 
+2024-08-26 01:51:28,829 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.sms_template_id 
+2024-08-26 01:51:28,829 1 INFO odoodb odoo.models: Prepare computation of ir.actions.server.sms_method 
+2024-08-26 01:51:28,863 1 INFO odoodb odoo.models: Prepare computation of res.partner.phone_sanitized 
+2024-08-26 01:51:29,141 1 INFO odoodb odoo.addons.phone_validation.tools.phone_validation: The `phonenumbers` Python module is not installed, contact numbers will not be verified. Please install the `phonenumbers` Python module. 
+2024-08-26 01:51:29,369 1 INFO odoodb odoo.modules.loading: loading sms/data/ir_cron_data.xml 
+2024-08-26 01:51:29,379 1 INFO odoodb odoo.modules.loading: loading sms/wizard/sms_composer_views.xml 
+2024-08-26 01:51:29,394 1 INFO odoodb odoo.modules.loading: loading sms/wizard/sms_template_preview_views.xml 
+2024-08-26 01:51:29,404 1 INFO odoodb odoo.modules.loading: loading sms/wizard/sms_resend_views.xml 
+2024-08-26 01:51:29,416 1 INFO odoodb odoo.modules.loading: loading sms/wizard/sms_template_reset_views.xml 
+2024-08-26 01:51:29,427 1 INFO odoodb odoo.modules.loading: loading sms/views/ir_actions_server_views.xml 
+2024-08-26 01:51:29,440 1 INFO odoodb odoo.modules.loading: loading sms/views/mail_notification_views.xml 
+2024-08-26 01:51:29,455 1 INFO odoodb odoo.modules.loading: loading sms/views/res_config_settings_views.xml 
+2024-08-26 01:51:29,474 1 INFO odoodb odoo.modules.loading: loading sms/views/res_partner_views.xml 
+2024-08-26 01:51:29,513 1 INFO odoodb odoo.modules.loading: loading sms/views/sms_sms_views.xml 
+2024-08-26 01:51:29,544 1 INFO odoodb odoo.modules.loading: loading sms/views/sms_template_views.xml 
+2024-08-26 01:51:29,571 1 INFO odoodb odoo.modules.loading: loading sms/security/ir.model.access.csv 
+2024-08-26 01:51:29,594 1 INFO odoodb odoo.modules.loading: loading sms/security/sms_security.xml 
+2024-08-26 01:51:29,604 1 INFO odoodb odoo.modules.loading: Module sms: loading demo 
+2024-08-26 01:51:29,604 1 INFO odoodb odoo.modules.loading: loading sms/data/sms_demo.xml 
+2024-08-26 01:51:29,609 1 INFO odoodb odoo.modules.loading: loading sms/data/mail_demo.xml 
+2024-08-26 01:51:29,613 1 INFO odoodb odoo.addons.nostr_bridge.models.mail_message: Creating new mail messages 
+2024-08-26 01:51:29,621 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:30,623 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:31,624 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:32,625 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Failed to publish event after multiple attempts 
+2024-08-26 01:51:32,625 1 WARNING odoodb odoo.addons.nostr_bridge.models.mail_message: Failed to publish message 10 to Nostr 
+2024-08-26 01:51:32,627 1 INFO odoodb odoo.addons.nostr_bridge.models.mail_message: Creating new mail messages 
+2024-08-26 01:51:32,631 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:33,632 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:34,633 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:35,635 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Failed to publish event after multiple attempts 
+2024-08-26 01:51:35,635 1 WARNING odoodb odoo.addons.nostr_bridge.models.mail_message: Failed to publish message 11 to Nostr 
+2024-08-26 01:51:35,643 1 INFO odoodb odoo.addons.nostr_bridge.models.mail_message: Creating new mail messages 
+2024-08-26 01:51:35,647 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:36,648 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:37,649 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:38,650 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Failed to publish event after multiple attempts 
+2024-08-26 01:51:38,650 1 WARNING odoodb odoo.addons.nostr_bridge.models.mail_message: Failed to publish message 12 to Nostr 
+2024-08-26 01:51:38,653 1 INFO odoodb odoo.addons.nostr_bridge.models.mail_message: Creating new mail messages 
+2024-08-26 01:51:38,657 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:39,659 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:40,660 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:41,661 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Failed to publish event after multiple attempts 
+2024-08-26 01:51:41,662 1 WARNING odoodb odoo.addons.nostr_bridge.models.mail_message: Failed to publish message 13 to Nostr 
+2024-08-26 01:51:41,666 1 INFO odoodb odoo.addons.nostr_bridge.models.mail_message: Creating new mail messages 
+2024-08-26 01:51:41,669 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:42,670 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:43,672 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:44,674 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Failed to publish event after multiple attempts 
+2024-08-26 01:51:44,674 1 WARNING odoodb odoo.addons.nostr_bridge.models.mail_message: Failed to publish message 14 to Nostr 
+2024-08-26 01:51:44,684 1 INFO odoodb odoo.addons.nostr_bridge.models.mail_message: Creating new mail messages 
+2024-08-26 01:51:44,690 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:45,691 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:46,692 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Error publishing event to Nostr: 'bool' object is not iterable 
+Traceback (most recent call last):
+  File "/opt/odoo/custom_addons/nostr_bridge/models/nostr_adapter.py", line 38, in publish_event
+    private_key = PrivateKey.from_nsec(self.env.user.nostr_private_key)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/key.py", line 50, in from_nsec
+    hrp, data, spec = bech32.bech32_decode(nsec)
+  File "/usr/local/lib/python3.10/dist-packages/nostr/bech32.py", line 75, in bech32_decode
+    if ((any(ord(x) < 33 or ord(x) > 126 for x in bech)) or
+TypeError: 'bool' object is not iterable
+2024-08-26 01:51:47,693 1 ERROR odoodb odoo.addons.nostr_bridge.models.nostr_adapter: Failed to publish event after multiple attempts 
+2024-08-26 01:51:47,693 1 WARNING odoodb odoo.addons.nostr_bridge.models.mail_message: Failed to publish message 15 to Nostr 
+2024-08-26 01:51:47,716 1 INFO odoodb odoo.modules.loading: Module sms loaded in 18.98s, 690 queries (+690 other) 
+2024-08-26 01:51:47,717 1 INFO odoodb odoo.modules.loading: Loading module snailmail (25/25) 
+2024-08-26 01:51:47,788 1 INFO odoodb odoo.modules.registry: module snailmail: creating or updating database tables 
+2024-08-26 01:51:48,152 1 INFO odoodb odoo.modules.loading: loading snailmail/data/snailmail_data.xml 
+2024-08-26 01:51:48,164 1 INFO odoodb odoo.modules.loading: loading snailmail/views/report_assets.xml 
+2024-08-26 01:51:48,182 1 INFO odoodb odoo.modules.loading: loading snailmail/views/snailmail_views.xml 
+2024-08-26 01:51:48,206 1 INFO odoodb odoo.modules.loading: loading snailmail/wizard/snailmail_confirm_views.xml 
+2024-08-26 01:51:48,213 1 INFO odoodb odoo.modules.loading: loading snailmail/wizard/snailmail_letter_format_error_views.xml 
+2024-08-26 01:51:48,224 1 INFO odoodb odoo.modules.loading: loading snailmail/wizard/snailmail_letter_missing_required_fields_views.xml 
+2024-08-26 01:51:48,234 1 INFO odoodb odoo.modules.loading: loading snailmail/security/ir.model.access.csv 
+2024-08-26 01:51:48,272 1 INFO odoodb odoo.modules.loading: Module snailmail loaded in 0.56s, 383 queries (+383 other) 
+2024-08-26 01:51:48,272 1 INFO odoodb odoo.modules.loading: 25 modules loaded in 34.98s, 10228 queries (+10228 extra) 
+2024-08-26 01:51:48,755 1 INFO odoodb odoo.modules.loading: Modules loaded. 
+2024-08-26 01:51:48,766 1 INFO odoodb odoo.modules.registry: Registry loaded in 54.347s 
+2024-08-26 01:51:48,766 1 INFO odoodb odoo.sql_db: ConnectionPool(used=0/count=0/max=64): Closed 1 connections  
+2024-08-26 01:51:48,771 27 INFO odoodb odoo.service.server: Worker WorkerHTTP (27) alive 
+2024-08-26 01:51:48,776 29 INFO odoodb odoo.service.server: Worker WorkerHTTP (29) alive 
+2024-08-26 01:51:48,783 32 INFO odoodb odoo.service.server: Worker WorkerCron (32) alive 
+2024-08-26 01:51:48,792 27 INFO odoodb odoo.addons.base.models.ir_http: Generating routing map for key None 
+2024-08-26 01:51:48,969 27 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 01:51:48,974 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:51:48] "GET /websocket HTTP/1.1" 500 - 7 0.007 0.189
+2024-08-26 01:51:49,726 30 WARNING ? py.warnings: /opt/odoo/odoo/odoo/tools/config.py:566: DeprecationWarning: The longpolling-port is a deprecated alias to the gevent-port option, please use the latter.
+  File "/opt/odoo/odoo/odoo-bin", line 8, in <module>
+    odoo.cli.main()
+  File "/opt/odoo/odoo/odoo/cli/command.py", line 66, in main
+    o.run(args)
+  File "/opt/odoo/odoo/odoo/cli/server.py", line 185, in run
+    main(args)
+  File "/opt/odoo/odoo/odoo/cli/server.py", line 132, in main
+    odoo.tools.config.parse_config(args)
+  File "/opt/odoo/odoo/odoo/tools/config.py", line 379, in parse_config
+    self._warn_deprecated_options()
+  File "/opt/odoo/odoo/odoo/tools/config.py", line 566, in _warn_deprecated_options
+    warnings.warn(
+ 
+2024-08-26 01:51:49,727 30 INFO ? odoo: Odoo version 16.0 
+2024-08-26 01:51:49,727 30 INFO ? odoo: Using configuration file at /etc/odoo/odoo.conf 
+2024-08-26 01:51:49,727 30 INFO ? odoo: addons paths: ['/opt/odoo/odoo/odoo/addons', '/opt/odoo/.local/share/Odoo/addons/16.0', '/opt/odoo/odoo/addons', '/opt/odoo/custom_addons'] 
+2024-08-26 01:51:49,727 30 INFO ? odoo: database: odoo@postgres:5432 
+2024-08-26 01:51:49,887 30 INFO ? odoo.addons.base.models.ir_actions_report: You need Wkhtmltopdf to print a pdf version of the reports. 
+2024-08-26 01:51:50,041 30 INFO ? odoo.service.server: Evented Service (longpolling) running on 0.0.0.0:8072 
+2024-08-26 01:52:06,082 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:06] "GET /web HTTP/1.1" 303 - 1 0.000 0.004
+2024-08-26 01:52:06,110 29 INFO odoodb odoo.addons.base.models.ir_http: Generating routing map for key None 
+2024-08-26 01:52:06,324 29 WARNING odoodb odoo.modules.module: Missing `license` key in manifest for 'ivcs_git', defaulting to LGPL-3 
+2024-08-26 01:52:09,051 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:09] "GET /web/login HTTP/1.1" 200 - 69 0.057 2.900
+2024-08-26 01:52:09,152 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:09] "GET /web/assets/196-d16a937/web.assets_frontend.min.css HTTP/1.1" 200 - 6 0.002 0.052
+2024-08-26 01:52:09,235 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:09] "GET /web/static/img/favicon.ico HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:52:09,292 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:09] "GET /web/binary/company_logo HTTP/1.1" 200 - 2 0.003 0.061
+2024-08-26 01:52:09,339 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:09] "GET /web/assets/198-0c71cd5/web.assets_frontend_lazy.min.js HTTP/1.1" 200 - 6 0.002 0.004
+2024-08-26 01:52:09,616 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:09] "GET /web/webclient/translations/1724637129598 HTTP/1.1" 200 - 3 0.001 0.012
+2024-08-26 01:52:09,629 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:09] "GET /web/webclient/translations/1724637129621 HTTP/1.1" 200 - 3 0.001 0.003
+2024-08-26 01:52:47,983 27 INFO odoodb odoo.addons.base.models.res_users: Login successful for db:odoodb login:admin from 172.28.0.1 
+2024-08-26 01:52:47,996 27 INFO odoodb odoo.modules.registry: At least one model cache has been invalidated, signaling through the database. 
+2024-08-26 01:52:47,997 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:47] "POST /web/login HTTP/1.1" 303 - 53 0.034 0.690
+2024-08-26 01:52:48,066 27 WARNING odoodb odoo.modules.module: Missing `license` key in manifest for 'ivcs_git', defaulting to LGPL-3 
+2024-08-26 01:52:50,962 32 INFO odoodb odoo.modules.registry: Invalidating all model caches after database signaling. 
+2024-08-26 01:52:50,965 32 INFO odoodb odoo.addons.base.models.ir_cron: Starting job `Base: Auto-vacuum internal data`. 
+2024-08-26 01:52:54,283 32 INFO odoodb odoo.addons.base.models.ir_attachment: filestore gc 66 checked, 0 removed 
+2024-08-26 01:52:54,316 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:54] "GET /web HTTP/1.1" 200 - 109 0.083 6.229
+2024-08-26 01:52:54,340 32 INFO odoodb odoo.addons.base.models.res_users: GC'd 0 user log entries 
+2024-08-26 01:52:54,370 32 INFO odoodb odoo.addons.auth_totp.models.auth_totp: GC'd 0 totp devices entries 
+2024-08-26 01:52:54,450 29 INFO odoodb odoo.modules.registry: Invalidating all model caches after database signaling. 
+2024-08-26 01:52:54,453 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:54] "GET /web/assets/200-5ee42ae/web.assets_backend.min.css HTTP/1.1" 200 - 4 0.001 0.005
+2024-08-26 01:52:54,457 32 INFO odoodb odoo.addons.base.models.ir_cron: Job `Base: Auto-vacuum internal data` done. 
+2024-08-26 01:52:54,466 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:54] "GET /web/assets/202-5ee42ae/web.assets_backend.min.js HTTP/1.1" 200 - 11 0.008 0.010
+2024-08-26 01:52:54,475 32 INFO odoodb odoo.addons.base.models.ir_cron: Starting job `Mail: Email Queue Manager`. 
+2024-08-26 01:52:54,484 32 INFO odoodb odoo.addons.base.models.ir_cron: Job `Mail: Email Queue Manager` done. 
+2024-08-26 01:52:54,495 32 INFO odoodb odoo.addons.base.models.ir_cron: Starting job `Notification: Delete Notifications older than 6 Month`. 
+2024-08-26 01:52:54,499 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:54] "GET /web/webclient/load_menus/3bdca0cdf2a8a8d7756038faf3667ee3b9ef80b9f2372a5851b3e1e91e487b3e HTTP/1.1" 200 - 2 0.001 0.004
+2024-08-26 01:52:54,502 32 INFO odoodb odoo.addons.base.models.ir_cron: Job `Notification: Delete Notifications older than 6 Month` done. 
+2024-08-26 01:52:54,517 32 INFO odoodb odoo.addons.base.models.ir_cron: Starting job `Notification: Send scheduled message notifications`. 
+2024-08-26 01:52:54,521 32 INFO odoodb odoo.addons.base.models.ir_cron: Job `Notification: Send scheduled message notifications` done. 
+2024-08-26 01:52:54,530 32 INFO odoodb odoo.addons.base.models.ir_cron: Starting job `Users: Notify About Unregistered Users`. 
+2024-08-26 01:52:54,537 32 INFO odoodb odoo.addons.base.models.ir_cron: Job `Users: Notify About Unregistered Users` done. 
+2024-08-26 01:52:54,552 32 INFO odoodb odoo.addons.base.models.ir_cron: Starting job `IVCS: Sync Repositories`. 
+2024-08-26 01:52:54,561 32 INFO odoodb odoo.addons.base.models.ir_cron: Job `IVCS: Sync Repositories` done. 
+2024-08-26 01:52:54,575 32 INFO odoodb odoo.addons.base.models.ir_cron: Starting job `Partner Autocomplete : Sync with remote DB`. 
+2024-08-26 01:52:54,595 32 INFO odoodb odoo.addons.base.models.ir_cron: Job `Partner Autocomplete : Sync with remote DB` done. 
+2024-08-26 01:52:54,606 32 INFO odoodb odoo.addons.base.models.ir_cron: Starting job `SMS: SMS Queue Manager`. 
+2024-08-26 01:52:54,612 32 INFO odoodb odoo.addons.base.models.ir_cron: Job `SMS: SMS Queue Manager` done. 
+2024-08-26 01:52:54,620 32 INFO odoodb odoo.addons.base.models.ir_cron: Starting job `Snailmail: process letters queue`. 
+2024-08-26 01:52:54,627 32 INFO odoodb odoo.addons.base.models.ir_cron: Job `Snailmail: process letters queue` done. 
+2024-08-26 01:52:55,299 29 INFO odoodb odoo.addons.partner_autocomplete.models.res_company: Starting enrich of company YourCompany (1) 
+2024-08-26 01:52:55,341 29 INFO odoodb odoo.addons.iap.tools.iap_tools: iap jsonrpc https://partner-autocomplete.odoo.com/iap/partner_autocomplete/enrich 
+2024-08-26 01:52:55,401 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:55] "GET /web/image?model=res.users&field=avatar_128&id=2 HTTP/1.1" 200 - 17 0.007 0.011
+2024-08-26 01:52:55,404 27 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 01:52:55,404 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:55] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.002
+2024-08-26 01:52:55,415 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:55] "POST /web/action/load HTTP/1.1" 200 - 8 0.003 0.006
+2024-08-26 01:52:55,534 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:55] "POST /mail/init_messaging HTTP/1.1" 200 - 56 0.030 0.036
+2024-08-26 01:52:55,540 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:55] "POST /web/dataset/call_kw/res.users/systray_get_activities HTTP/1.1" 200 - 3 0.002 0.003
+2024-08-26 01:52:55,577 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:55] "POST /mail/inbox/messages HTTP/1.1" 200 - 8 0.004 0.005
+2024-08-26 01:52:55,599 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:55] "POST /mail/load_message_failures HTTP/1.1" 200 - 10 0.010 0.010
+2024-08-26 01:52:55,658 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:55] "GET /web/image/mail.channel/1/avatar_128?unique=770317a1cc8801f1689cbb364dea69d97c1a61180918a2811397b98beb3edd4b3b40337021f81a54978e4febd43805b3b4e8574f2e9770b18db04d8ff60cf014 HTTP/1.1" 200 - 9 0.005 0.008
+2024-08-26 01:52:55,786 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:55] "GET /web/image/res.company/1/favicon HTTP/1.1" 200 - 10 0.003 0.006
+2024-08-26 01:52:57,130 29 INFO odoodb odoo.modules.registry: At least one model cache has been invalidated, signaling through the database. 
+2024-08-26 01:52:57,131 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:52:57] "POST /web/dataset/call_kw/res.company/iap_enrich_auto HTTP/1.1" 200 - 34 0.027 1.816
+2024-08-26 01:53:23,501 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "POST /web/action/load HTTP/1.1" 200 - 19 0.010 0.014
+2024-08-26 01:53:23,568 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "POST /web/dataset/call_kw/ir.module.module/get_views HTTP/1.1" 200 - 48 0.020 0.035
+2024-08-26 01:53:23,595 27 INFO odoodb odoo.modules.registry: Invalidating all model caches after database signaling. 
+2024-08-26 01:53:23,607 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "POST /web/dataset/call_kw/ir.module.module/web_search_read HTTP/1.1" 200 - 4 0.002 0.006
+2024-08-26 01:53:23,627 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "POST /web/dataset/call_kw/ir.module.module/search_panel_select_range HTTP/1.1" 200 - 49 0.018 0.016
+2024-08-26 01:53:23,883 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /openeducat_facility/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,883 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /openeducat_exam/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,886 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /openeducat_library/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,886 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /openeducat_fees/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,889 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /openeducat_parent/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,889 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /openeducat_timetable/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,892 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /web_openeducat/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,893 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /sale_management/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.003
+2024-08-26 01:53:23,896 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /crm/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,896 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /account/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,898 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /website/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:23,898 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/mrp_workorder.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:23,900 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /stock/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:23,900 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/account_accountant.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:23,903 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/knowledge.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:23,903 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /purchase/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,905 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /point_of_sale/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,906 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /project/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,910 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /website_sale/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.003
+2024-08-26 01:53:23,910 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /mrp/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,912 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /mass_mailing/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,912 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/timesheet_grid.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,915 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /hr_expense/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:23,915 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /hr_holidays/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,917 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/web_studio.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:23,938 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/industry_fsm.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,940 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /hr_recruitment/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.004
+2024-08-26 01:53:23,941 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /data_recycle/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,944 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /hr/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,945 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /website_slides/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,947 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/helpdesk.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,948 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/sale_subscription.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,951 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /maintenance/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,952 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/quality_control.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,954 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/hr_appraisal.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,954 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/planning.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,958 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /website_event/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.003
+2024-08-26 01:53:23,958 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /im_livechat/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,961 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /survey/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,961 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /fleet/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,963 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/appointment.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:23,964 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:23] "GET /base/static/img/icons/marketing_automation.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,954 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /base/static/img/icons/sale_ebay.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,954 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /base/static/img/icons/sign.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,956 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /note/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:24,956 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /hr_attendance/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:53:24,959 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /hr_skills/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,959 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /lunch/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,961 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /website_hr_recruitment/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,961 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /mass_mailing_sms/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,963 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /base/static/img/icons/stock_barcode.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,963 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /base/static/img/icons/voip.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,966 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /repair/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,966 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /base/static/img/icons/web_mobile.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:24,968 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:24] "GET /hr_contract/static/description/icon.png HTTP/1.1" 200 - 0 0.000 0.001
+2024-08-26 01:53:25,755 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:25] "POST /web/dataset/call_kw/ir.module.module/web_search_read HTTP/1.1" 200 - 4 0.002 0.010
+2024-08-26 01:53:25,765 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:25] "POST /web/dataset/call_kw/ir.module.module/search_panel_select_range HTTP/1.1" 200 - 40 0.012 0.012
+2024-08-26 01:53:55,651 29 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 01:53:55,654 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:53:55] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.006
+2024-08-26 01:54:56,001 29 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 01:54:56,002 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:54:56] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.002
+2024-08-26 01:55:11,231 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:11] "POST /web/dataset/call_kw/ir.module.module/search_panel_select_range HTTP/1.1" 200 - 37 0.031 0.015
+2024-08-26 01:55:11,248 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:11] "POST /web/dataset/call_kw/ir.module.module/web_search_read HTTP/1.1" 200 - 3 0.003 0.004
+2024-08-26 01:55:12,706 27 INFO odoodb odoo.addons.base.models.ir_module: ALLOW access to module.button_immediate_install on ['Nostr Authentication'] to user admin #2 via 172.28.0.1 
+2024-08-26 01:55:12,707 27 INFO odoodb odoo.addons.base.models.ir_module: User #2 triggered module installation 
+2024-08-26 01:55:12,708 27 INFO odoodb odoo.addons.base.models.ir_module: ALLOW access to module.button_install on ['Nostr Authentication'] to user admin #2 via 172.28.0.1 
+2024-08-26 01:55:12,793 27 INFO odoodb odoo.modules.loading: loading 1 modules... 
+2024-08-26 01:55:12,803 27 INFO odoodb odoo.modules.loading: 1 modules loaded in 0.01s, 0 queries (+0 extra) 
+2024-08-26 01:55:12,842 27 INFO odoodb odoo.modules.loading: updating modules list 
+2024-08-26 01:55:12,845 27 INFO odoodb odoo.addons.base.models.ir_module: ALLOW access to module.update_list on [] to user __system__ #1 via 172.28.0.1 
+2024-08-26 01:55:13,415 27 INFO odoodb odoo.modules.loading: loading 25 modules... 
+2024-08-26 01:55:13,438 27 INFO odoodb odoo.modules.loading: 25 modules loaded in 0.02s, 0 queries (+0 extra) 
+2024-08-26 01:55:13,440 27 INFO odoodb odoo.modules.loading: loading 26 modules... 
+2024-08-26 01:55:13,440 27 INFO odoodb odoo.modules.loading: Loading module nostr_auth (23/26) 
+2024-08-26 01:55:13,506 27 INFO odoodb odoo.modules.registry: module nostr_auth: creating or updating database tables 
+2024-08-26 01:55:13,574 27 INFO odoodb odoo.modules.loading: loading nostr_auth/views/res_users_views.xml 
+2024-08-26 01:55:13,613 27 INFO odoodb odoo.modules.loading: Module nostr_auth loaded in 0.17s, 69 queries (+69 other) 
+2024-08-26 01:55:13,613 27 INFO odoodb odoo.modules.loading: 26 modules loaded in 0.17s, 69 queries (+69 extra) 
+2024-08-26 01:55:14,075 27 INFO odoodb odoo.modules.loading: Modules loaded. 
+2024-08-26 01:55:14,084 27 INFO odoodb odoo.modules.registry: Registry loaded in 1.319s 
+2024-08-26 01:55:14,084 27 INFO odoodb odoo.addons.base.models.ir_module: getting next ir.actions.todo() 
+2024-08-26 01:55:14,089 27 INFO odoodb odoo.modules.registry: Registry changed, signaling through the database 
+2024-08-26 01:55:14,090 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:14] "POST /web/dataset/call_button HTTP/1.1" 200 - 1698 0.694 0.697
+2024-08-26 01:55:14,109 29 INFO odoodb odoo.modules.registry: Reloading the model registry after database signaling. 
+2024-08-26 01:55:14,126 29 INFO odoodb odoo.modules.loading: loading 1 modules... 
+2024-08-26 01:55:14,137 29 INFO odoodb odoo.modules.loading: 1 modules loaded in 0.01s, 0 queries (+0 extra) 
+2024-08-26 01:55:14,142 29 INFO odoodb odoo.modules.loading: loading 26 modules... 
+2024-08-26 01:55:14,172 29 INFO odoodb odoo.modules.loading: 26 modules loaded in 0.03s, 0 queries (+0 extra) 
+2024-08-26 01:55:14,240 29 INFO odoodb odoo.modules.loading: Modules loaded. 
+2024-08-26 01:55:14,243 29 INFO odoodb odoo.modules.registry: Registry loaded in 0.134s 
+2024-08-26 01:55:14,244 29 INFO odoodb odoo.addons.base.models.ir_http: Generating routing map for key None 
+2024-08-26 01:55:14,512 29 WARNING odoodb odoo.modules.module: Missing `license` key in manifest for 'nostr_auth', defaulting to LGPL-3 
+2024-08-26 01:55:15,057 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:15] "GET /web HTTP/1.1" 200 - 104 0.055 0.895
+2024-08-26 01:55:16,032 27 INFO odoodb odoo.addons.base.models.ir_http: Generating routing map for key None 
+2024-08-26 01:55:16,095 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:16] "POST /web/dataset/call_kw/res.users/systray_get_activities HTTP/1.1" 200 - 4 0.003 0.004
+2024-08-26 01:55:16,130 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:16] "GET /web/image?model=res.users&field=avatar_128&id=2 HTTP/1.1" 304 - 17 0.008 0.012
+2024-08-26 01:55:16,143 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:16] "POST /web/action/load HTTP/1.1" 200 - 8 0.003 0.008
+2024-08-26 01:55:16,199 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:16] "GET /bus/websocket_worker_bundle?v=1.0.5 HTTP/1.1" 304 - 13 0.008 0.047
+2024-08-26 01:55:16,235 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:16] "POST /mail/init_messaging HTTP/1.1" 200 - 63 0.039 0.166
+2024-08-26 01:55:16,288 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:16] "POST /mail/inbox/messages HTTP/1.1" 200 - 8 0.005 0.005
+2024-08-26 01:55:16,294 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:16] "POST /mail/load_message_failures HTTP/1.1" 200 - 11 0.006 0.008
+2024-08-26 01:55:18,504 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:18] "POST /web/action/load HTTP/1.1" 200 - 11 0.005 0.008
+2024-08-26 01:55:18,567 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:18] "POST /web/dataset/call_kw/ir.module.module/get_views HTTP/1.1" 200 - 48 0.025 0.032
+2024-08-26 01:55:18,601 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:18] "POST /web/dataset/call_kw/ir.module.module/web_search_read HTTP/1.1" 200 - 4 0.002 0.007
+2024-08-26 01:55:18,613 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:18] "POST /web/dataset/call_kw/ir.module.module/search_panel_select_range HTTP/1.1" 200 - 41 0.013 0.011
+2024-08-26 01:55:20,040 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:20] "POST /web/dataset/call_kw/ir.module.module/web_search_read HTTP/1.1" 200 - 4 0.002 0.009
+2024-08-26 01:55:20,050 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:20] "POST /web/dataset/call_kw/ir.module.module/search_panel_select_range HTTP/1.1" 200 - 37 0.012 0.012
+2024-08-26 01:55:21,745 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:21] "POST /web/dataset/call_kw/ir.module.module/search_panel_select_range HTTP/1.1" 200 - 41 0.033 0.014
+2024-08-26 01:55:21,762 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:21] "POST /web/dataset/call_kw/ir.module.module/web_search_read HTTP/1.1" 200 - 3 0.004 0.004
+2024-08-26 01:55:24,407 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:24] "POST /web/action/load HTTP/1.1" 200 - 10 0.004 0.007
+2024-08-26 01:55:24,452 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:24] "POST /web/dataset/call_kw/res.config.settings/get_views HTTP/1.1" 200 - 15 0.011 0.026
+2024-08-26 01:55:25,049 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Response status code: 200 
+2024-08-26 01:55:25,050 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: API response (first 108 items): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com', 'wss://nostr.einundzwanzig.space', 'wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.oldcity-bitcoiners.info', 'wss://nostr.massmux.com', 'wss://nostr-relay.schnitzel.world', 'wss://relay.nostr.com.au', 'wss://knostr.neutrine.com', 'wss://nostr.nodeofsven.com', 'wss://nostr.vulpem.com', 'wss://relay.farscapian.com', 'wss://relay.sovereign-stack.org', 'wss://nostr-verif.slothy.win', 'wss://relay.lexingtonbitcoin.org', 'wss://relay.plebstr.com', 'wss://relay.wellorder.net', 'wss://nostr.easydns.ca', 'wss://relay.dwadziesciajeden.pl', 'wss://e.nos.lol', 'wss://ragnar-relay.com', 'wss://nostr.data.haus', 'wss://nostr.wine', 'wss://nostr.koning-degraaf.nl', 'wss://nostr.thank.eu', 'wss://relay.hamnet.io', 'wss://nostr.sidnlabs.nl', 'wss://nostr.inosta.cc', 'wss://nostr21.com', 'wss://nostr.ch3n2k.com', 'wss://relay.nostrview.com', 'wss://relay.nostromo.social', 'wss://offchain.pub', 'wss://relay.nostr.wirednet.jp', 'wss://nostr.l00p.org', 'wss://lightningrelay.com', 'wss://bitcoinmaximalists.online', 'wss://private.red.gb.net', 'wss://relay.nostrid.com', 'wss://relay.nostrcheck.me', 'wss://nostrelay.yeghro.site', 'wss://relay.nostr.vet', 'wss://nostr.yuv.al', 'wss://nostrue.com', 'wss://nproxy.kristapsk.lv', 'wss://nostr.topeth.info', 'wss://nostr.bitcoiner.social', 'wss://relay.orange-crush.com', 'wss://nostr.spaceshell.xyz', 'wss://nostr.roundrockbitcoiners.com', 'wss://relay.nostrology.org', 'wss://nostr.bch.ninja', 'wss://nostr-dev.wellorder.net', 'wss://relay.snort.social', 'wss://nr.yay.so', 'wss://nostr.lu.ke', 'wss://atlas.nostr.land', 'wss://nostr.fmt.wiz.biz', 'wss://global-relay.cesc.trade', 'wss://nostr.pjv.me', 'wss://relay.roli.social', 'wss://brb.io', 'wss://eden.nostr.land', 'wss://nostr-verified.wellorder.net', 'wss://nostr.noones.com', 'wss://relay.nostr.nu', 'wss://nostr-relay.bitcoin.ninja', 'wss://freespeech.casa', 'wss://bitcoiner.social', 'wss://nostr.1f52b.xyz', 'wss://nostr.sebastix.dev', 'wss://nostr.cizmar.net', 'wss://n.wingu.se', 'wss://relay.nostr.hach.re', 'wss://nostr.bitcoinplebs.de', 'wss://nostr.corebreach.com', 'wss://tmp-relay.cesc.trade', 'wss://nostr.mutinywallet.com', 'wss://nostr.decentony.com', 'wss://nostr.tools.global.id', 'wss://xmr.usenostr.org', 'wss://nostr.naut.social', 'wss://at.nostrworks.com', 'wss://nostr.sovbit.host', 'wss://nostr.1sat.org', 'wss://nostr.randomdevelopment.biz', 'wss://mastodon.cloud/api/v1/streaming', 'wss://nostr.256k1.dev', 'wss://relay.beta.fogtype.com', 'wss://rsslay.ch3n2k.com', 'wss://nostr.rocketnode.space', 'wss://relay.nostr.bg', 'wss://nostr.globals.fans', 'wss://nostr.primz.org', 'wss://btc.klendazu.com', 'wss://relay.n057r.club', 'wss://slick.mjex.me', 'wss://nostr.lorentz.is', 'wss://relay.nostrified.org', 'wss://relay.primal.net', 'wss://nostr.cercatrova.me', 'wss://nostr.swiss-enigma.ch', 'wss://nostr-relay.derekross.me', 'wss://puravida.nostr.land'] 
+2024-08-26 01:55:25,050 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Number of relay links found: 108 
+2024-08-26 01:55:25,050 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Extracted relays (first 5): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com'] 
+2024-08-26 01:55:25,518 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Response status code: 200 
+2024-08-26 01:55:25,518 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: API response (first 108 items): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com', 'wss://nostr.einundzwanzig.space', 'wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.oldcity-bitcoiners.info', 'wss://nostr.massmux.com', 'wss://nostr-relay.schnitzel.world', 'wss://relay.nostr.com.au', 'wss://knostr.neutrine.com', 'wss://nostr.nodeofsven.com', 'wss://nostr.vulpem.com', 'wss://relay.farscapian.com', 'wss://relay.sovereign-stack.org', 'wss://nostr-verif.slothy.win', 'wss://relay.lexingtonbitcoin.org', 'wss://relay.plebstr.com', 'wss://relay.wellorder.net', 'wss://nostr.easydns.ca', 'wss://relay.dwadziesciajeden.pl', 'wss://e.nos.lol', 'wss://ragnar-relay.com', 'wss://nostr.data.haus', 'wss://nostr.wine', 'wss://nostr.koning-degraaf.nl', 'wss://nostr.thank.eu', 'wss://relay.hamnet.io', 'wss://nostr.sidnlabs.nl', 'wss://nostr.inosta.cc', 'wss://nostr21.com', 'wss://nostr.ch3n2k.com', 'wss://relay.nostrview.com', 'wss://relay.nostromo.social', 'wss://offchain.pub', 'wss://relay.nostr.wirednet.jp', 'wss://nostr.l00p.org', 'wss://lightningrelay.com', 'wss://bitcoinmaximalists.online', 'wss://private.red.gb.net', 'wss://relay.nostrid.com', 'wss://relay.nostrcheck.me', 'wss://nostrelay.yeghro.site', 'wss://relay.nostr.vet', 'wss://nostr.yuv.al', 'wss://nostrue.com', 'wss://nproxy.kristapsk.lv', 'wss://nostr.topeth.info', 'wss://nostr.bitcoiner.social', 'wss://relay.orange-crush.com', 'wss://nostr.spaceshell.xyz', 'wss://nostr.roundrockbitcoiners.com', 'wss://relay.nostrology.org', 'wss://nostr.bch.ninja', 'wss://nostr-dev.wellorder.net', 'wss://relay.snort.social', 'wss://nr.yay.so', 'wss://nostr.lu.ke', 'wss://atlas.nostr.land', 'wss://nostr.fmt.wiz.biz', 'wss://global-relay.cesc.trade', 'wss://nostr.pjv.me', 'wss://relay.roli.social', 'wss://brb.io', 'wss://eden.nostr.land', 'wss://nostr-verified.wellorder.net', 'wss://nostr.noones.com', 'wss://relay.nostr.nu', 'wss://nostr-relay.bitcoin.ninja', 'wss://freespeech.casa', 'wss://bitcoiner.social', 'wss://nostr.1f52b.xyz', 'wss://nostr.sebastix.dev', 'wss://nostr.cizmar.net', 'wss://n.wingu.se', 'wss://relay.nostr.hach.re', 'wss://nostr.bitcoinplebs.de', 'wss://nostr.corebreach.com', 'wss://tmp-relay.cesc.trade', 'wss://nostr.mutinywallet.com', 'wss://nostr.decentony.com', 'wss://nostr.tools.global.id', 'wss://xmr.usenostr.org', 'wss://nostr.naut.social', 'wss://at.nostrworks.com', 'wss://nostr.sovbit.host', 'wss://nostr.1sat.org', 'wss://nostr.randomdevelopment.biz', 'wss://mastodon.cloud/api/v1/streaming', 'wss://nostr.256k1.dev', 'wss://relay.beta.fogtype.com', 'wss://rsslay.ch3n2k.com', 'wss://nostr.rocketnode.space', 'wss://relay.nostr.bg', 'wss://nostr.globals.fans', 'wss://nostr.primz.org', 'wss://btc.klendazu.com', 'wss://relay.n057r.club', 'wss://slick.mjex.me', 'wss://nostr.lorentz.is', 'wss://relay.nostrified.org', 'wss://relay.primal.net', 'wss://nostr.cercatrova.me', 'wss://nostr.swiss-enigma.ch', 'wss://nostr-relay.derekross.me', 'wss://puravida.nostr.land'] 
+2024-08-26 01:55:25,518 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Number of relay links found: 108 
+2024-08-26 01:55:25,518 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Extracted relays (first 5): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com'] 
+2024-08-26 01:55:26,006 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Response status code: 200 
+2024-08-26 01:55:26,007 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: API response (first 108 items): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com', 'wss://nostr.einundzwanzig.space', 'wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.oldcity-bitcoiners.info', 'wss://nostr.massmux.com', 'wss://nostr-relay.schnitzel.world', 'wss://relay.nostr.com.au', 'wss://knostr.neutrine.com', 'wss://nostr.nodeofsven.com', 'wss://nostr.vulpem.com', 'wss://relay.farscapian.com', 'wss://relay.sovereign-stack.org', 'wss://nostr-verif.slothy.win', 'wss://relay.lexingtonbitcoin.org', 'wss://relay.plebstr.com', 'wss://relay.wellorder.net', 'wss://nostr.easydns.ca', 'wss://relay.dwadziesciajeden.pl', 'wss://e.nos.lol', 'wss://ragnar-relay.com', 'wss://nostr.data.haus', 'wss://nostr.wine', 'wss://nostr.koning-degraaf.nl', 'wss://nostr.thank.eu', 'wss://relay.hamnet.io', 'wss://nostr.sidnlabs.nl', 'wss://nostr.inosta.cc', 'wss://nostr21.com', 'wss://nostr.ch3n2k.com', 'wss://relay.nostrview.com', 'wss://relay.nostromo.social', 'wss://offchain.pub', 'wss://relay.nostr.wirednet.jp', 'wss://nostr.l00p.org', 'wss://lightningrelay.com', 'wss://bitcoinmaximalists.online', 'wss://private.red.gb.net', 'wss://relay.nostrid.com', 'wss://relay.nostrcheck.me', 'wss://nostrelay.yeghro.site', 'wss://relay.nostr.vet', 'wss://nostr.yuv.al', 'wss://nostrue.com', 'wss://nproxy.kristapsk.lv', 'wss://nostr.topeth.info', 'wss://nostr.bitcoiner.social', 'wss://relay.orange-crush.com', 'wss://nostr.spaceshell.xyz', 'wss://nostr.roundrockbitcoiners.com', 'wss://relay.nostrology.org', 'wss://nostr.bch.ninja', 'wss://nostr-dev.wellorder.net', 'wss://relay.snort.social', 'wss://nr.yay.so', 'wss://nostr.lu.ke', 'wss://atlas.nostr.land', 'wss://nostr.fmt.wiz.biz', 'wss://global-relay.cesc.trade', 'wss://nostr.pjv.me', 'wss://relay.roli.social', 'wss://brb.io', 'wss://eden.nostr.land', 'wss://nostr-verified.wellorder.net', 'wss://nostr.noones.com', 'wss://relay.nostr.nu', 'wss://nostr-relay.bitcoin.ninja', 'wss://freespeech.casa', 'wss://bitcoiner.social', 'wss://nostr.1f52b.xyz', 'wss://nostr.sebastix.dev', 'wss://nostr.cizmar.net', 'wss://n.wingu.se', 'wss://relay.nostr.hach.re', 'wss://nostr.bitcoinplebs.de', 'wss://nostr.corebreach.com', 'wss://tmp-relay.cesc.trade', 'wss://nostr.mutinywallet.com', 'wss://nostr.decentony.com', 'wss://nostr.tools.global.id', 'wss://xmr.usenostr.org', 'wss://nostr.naut.social', 'wss://at.nostrworks.com', 'wss://nostr.sovbit.host', 'wss://nostr.1sat.org', 'wss://nostr.randomdevelopment.biz', 'wss://mastodon.cloud/api/v1/streaming', 'wss://nostr.256k1.dev', 'wss://relay.beta.fogtype.com', 'wss://rsslay.ch3n2k.com', 'wss://nostr.rocketnode.space', 'wss://relay.nostr.bg', 'wss://nostr.globals.fans', 'wss://nostr.primz.org', 'wss://btc.klendazu.com', 'wss://relay.n057r.club', 'wss://slick.mjex.me', 'wss://nostr.lorentz.is', 'wss://relay.nostrified.org', 'wss://relay.primal.net', 'wss://nostr.cercatrova.me', 'wss://nostr.swiss-enigma.ch', 'wss://nostr-relay.derekross.me', 'wss://puravida.nostr.land'] 
+2024-08-26 01:55:26,007 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Number of relay links found: 108 
+2024-08-26 01:55:26,007 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Extracted relays (first 5): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com'] 
+2024-08-26 01:55:26,012 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Set new relay URLs: wss://relay.damus.io,wss://nostr-pub.wellorder.net,wss://nostr.mom,wss://nostr.slothy.win,wss://rela... 
+2024-08-26 01:55:26,035 29 INFO odoodb odoo.modules.registry: At least one model cache has been invalidated, signaling through the database. 
+2024-08-26 01:55:26,046 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:26] "POST /web/dataset/call_kw/res.config.settings/onchange HTTP/1.1" 200 - 60 0.022 1.530
+2024-08-26 01:55:26,114 29 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:26] "GET /base_setup/static/src/img/google_play.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:55:26,114 27 INFO ? werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:26] "GET /base_setup/static/src/img/app_store.png HTTP/1.1" 200 - 0 0.000 0.002
+2024-08-26 01:55:26,132 27 INFO odoodb odoo.modules.registry: Invalidating all model caches after database signaling. 
+2024-08-26 01:55:26,139 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:26] "POST /base_setup/demo_active HTTP/1.1" 200 - 10 0.004 0.004
+2024-08-26 01:55:26,150 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:26] "POST /base_setup/data HTTP/1.1" 200 - 7 0.002 0.002
+2024-08-26 01:55:26,230 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:26] "GET /nostr_bridge/static/description/icon.png HTTP/1.1" 404 - 2 0.001 0.003
+2024-08-26 01:55:26,230 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:26] "GET /ivcs_git/static/description/icon.png HTTP/1.1" 404 - 2 0.001 0.003
+2024-08-26 01:55:36,626 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Using existing relay URLs: wss://relay.damus.io,wss://nostr-pub.wellorder.net,wss://nostr.mom,wss://nostr.slothy.win,wss://rela... 
+2024-08-26 01:55:36,635 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:36] "POST /web/dataset/call_kw/res.config.settings/create HTTP/1.1" 200 - 29 0.009 0.012
+2024-08-26 01:55:36,663 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:36] "POST /web/dataset/call_kw/res.config.settings/read HTTP/1.1" 200 - 16 0.009 0.012
+2024-08-26 01:55:37,147 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Response status code: 200 
+2024-08-26 01:55:37,148 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: API response (first 108 items): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com', 'wss://nostr.einundzwanzig.space', 'wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.oldcity-bitcoiners.info', 'wss://nostr.massmux.com', 'wss://nostr-relay.schnitzel.world', 'wss://relay.nostr.com.au', 'wss://knostr.neutrine.com', 'wss://nostr.nodeofsven.com', 'wss://nostr.vulpem.com', 'wss://relay.farscapian.com', 'wss://relay.sovereign-stack.org', 'wss://nostr-verif.slothy.win', 'wss://relay.lexingtonbitcoin.org', 'wss://relay.plebstr.com', 'wss://relay.wellorder.net', 'wss://nostr.easydns.ca', 'wss://relay.dwadziesciajeden.pl', 'wss://e.nos.lol', 'wss://ragnar-relay.com', 'wss://nostr.data.haus', 'wss://nostr.wine', 'wss://nostr.koning-degraaf.nl', 'wss://nostr.thank.eu', 'wss://relay.hamnet.io', 'wss://nostr.sidnlabs.nl', 'wss://nostr.inosta.cc', 'wss://nostr21.com', 'wss://nostr.ch3n2k.com', 'wss://relay.nostrview.com', 'wss://relay.nostromo.social', 'wss://offchain.pub', 'wss://relay.nostr.wirednet.jp', 'wss://nostr.l00p.org', 'wss://lightningrelay.com', 'wss://bitcoinmaximalists.online', 'wss://private.red.gb.net', 'wss://relay.nostrid.com', 'wss://relay.nostrcheck.me', 'wss://nostrelay.yeghro.site', 'wss://relay.nostr.vet', 'wss://nostr.yuv.al', 'wss://nostrue.com', 'wss://nproxy.kristapsk.lv', 'wss://nostr.topeth.info', 'wss://nostr.bitcoiner.social', 'wss://relay.orange-crush.com', 'wss://nostr.spaceshell.xyz', 'wss://nostr.roundrockbitcoiners.com', 'wss://relay.nostrology.org', 'wss://nostr.bch.ninja', 'wss://nostr-dev.wellorder.net', 'wss://relay.snort.social', 'wss://nr.yay.so', 'wss://nostr.lu.ke', 'wss://atlas.nostr.land', 'wss://nostr.fmt.wiz.biz', 'wss://global-relay.cesc.trade', 'wss://nostr.pjv.me', 'wss://relay.roli.social', 'wss://brb.io', 'wss://eden.nostr.land', 'wss://nostr-verified.wellorder.net', 'wss://nostr.noones.com', 'wss://relay.nostr.nu', 'wss://nostr-relay.bitcoin.ninja', 'wss://freespeech.casa', 'wss://bitcoiner.social', 'wss://nostr.1f52b.xyz', 'wss://nostr.sebastix.dev', 'wss://nostr.cizmar.net', 'wss://n.wingu.se', 'wss://relay.nostr.hach.re', 'wss://nostr.bitcoinplebs.de', 'wss://nostr.corebreach.com', 'wss://tmp-relay.cesc.trade', 'wss://nostr.mutinywallet.com', 'wss://nostr.decentony.com', 'wss://nostr.tools.global.id', 'wss://xmr.usenostr.org', 'wss://nostr.naut.social', 'wss://at.nostrworks.com', 'wss://nostr.sovbit.host', 'wss://nostr.1sat.org', 'wss://nostr.randomdevelopment.biz', 'wss://mastodon.cloud/api/v1/streaming', 'wss://nostr.256k1.dev', 'wss://relay.beta.fogtype.com', 'wss://rsslay.ch3n2k.com', 'wss://nostr.rocketnode.space', 'wss://relay.nostr.bg', 'wss://nostr.globals.fans', 'wss://nostr.primz.org', 'wss://btc.klendazu.com', 'wss://relay.n057r.club', 'wss://slick.mjex.me', 'wss://nostr.lorentz.is', 'wss://relay.nostrified.org', 'wss://relay.primal.net', 'wss://nostr.cercatrova.me', 'wss://nostr.swiss-enigma.ch', 'wss://nostr-relay.derekross.me', 'wss://puravida.nostr.land'] 
+2024-08-26 01:55:37,148 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Number of relay links found: 108 
+2024-08-26 01:55:37,148 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Extracted relays (first 5): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com'] 
+2024-08-26 01:55:37,597 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Response status code: 200 
+2024-08-26 01:55:37,598 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: API response (first 108 items): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com', 'wss://nostr.einundzwanzig.space', 'wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.oldcity-bitcoiners.info', 'wss://nostr.massmux.com', 'wss://nostr-relay.schnitzel.world', 'wss://relay.nostr.com.au', 'wss://knostr.neutrine.com', 'wss://nostr.nodeofsven.com', 'wss://nostr.vulpem.com', 'wss://relay.farscapian.com', 'wss://relay.sovereign-stack.org', 'wss://nostr-verif.slothy.win', 'wss://relay.lexingtonbitcoin.org', 'wss://relay.plebstr.com', 'wss://relay.wellorder.net', 'wss://nostr.easydns.ca', 'wss://relay.dwadziesciajeden.pl', 'wss://e.nos.lol', 'wss://ragnar-relay.com', 'wss://nostr.data.haus', 'wss://nostr.wine', 'wss://nostr.koning-degraaf.nl', 'wss://nostr.thank.eu', 'wss://relay.hamnet.io', 'wss://nostr.sidnlabs.nl', 'wss://nostr.inosta.cc', 'wss://nostr21.com', 'wss://nostr.ch3n2k.com', 'wss://relay.nostrview.com', 'wss://relay.nostromo.social', 'wss://offchain.pub', 'wss://relay.nostr.wirednet.jp', 'wss://nostr.l00p.org', 'wss://lightningrelay.com', 'wss://bitcoinmaximalists.online', 'wss://private.red.gb.net', 'wss://relay.nostrid.com', 'wss://relay.nostrcheck.me', 'wss://nostrelay.yeghro.site', 'wss://relay.nostr.vet', 'wss://nostr.yuv.al', 'wss://nostrue.com', 'wss://nproxy.kristapsk.lv', 'wss://nostr.topeth.info', 'wss://nostr.bitcoiner.social', 'wss://relay.orange-crush.com', 'wss://nostr.spaceshell.xyz', 'wss://nostr.roundrockbitcoiners.com', 'wss://relay.nostrology.org', 'wss://nostr.bch.ninja', 'wss://nostr-dev.wellorder.net', 'wss://relay.snort.social', 'wss://nr.yay.so', 'wss://nostr.lu.ke', 'wss://atlas.nostr.land', 'wss://nostr.fmt.wiz.biz', 'wss://global-relay.cesc.trade', 'wss://nostr.pjv.me', 'wss://relay.roli.social', 'wss://brb.io', 'wss://eden.nostr.land', 'wss://nostr-verified.wellorder.net', 'wss://nostr.noones.com', 'wss://relay.nostr.nu', 'wss://nostr-relay.bitcoin.ninja', 'wss://freespeech.casa', 'wss://bitcoiner.social', 'wss://nostr.1f52b.xyz', 'wss://nostr.sebastix.dev', 'wss://nostr.cizmar.net', 'wss://n.wingu.se', 'wss://relay.nostr.hach.re', 'wss://nostr.bitcoinplebs.de', 'wss://nostr.corebreach.com', 'wss://tmp-relay.cesc.trade', 'wss://nostr.mutinywallet.com', 'wss://nostr.decentony.com', 'wss://nostr.tools.global.id', 'wss://xmr.usenostr.org', 'wss://nostr.naut.social', 'wss://at.nostrworks.com', 'wss://nostr.sovbit.host', 'wss://nostr.1sat.org', 'wss://nostr.randomdevelopment.biz', 'wss://mastodon.cloud/api/v1/streaming', 'wss://nostr.256k1.dev', 'wss://relay.beta.fogtype.com', 'wss://rsslay.ch3n2k.com', 'wss://nostr.rocketnode.space', 'wss://relay.nostr.bg', 'wss://nostr.globals.fans', 'wss://nostr.primz.org', 'wss://btc.klendazu.com', 'wss://relay.n057r.club', 'wss://slick.mjex.me', 'wss://nostr.lorentz.is', 'wss://relay.nostrified.org', 'wss://relay.primal.net', 'wss://nostr.cercatrova.me', 'wss://nostr.swiss-enigma.ch', 'wss://nostr-relay.derekross.me', 'wss://puravida.nostr.land'] 
+2024-08-26 01:55:37,598 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Number of relay links found: 108 
+2024-08-26 01:55:37,598 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Extracted relays (first 5): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com'] 
+2024-08-26 01:55:37,599 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Using existing relay URLs: wss://relay.damus.io,wss://nostr-pub.wellorder.net,wss://nostr.mom,wss://nostr.slothy.win,wss://rela... 
+2024-08-26 01:55:37,605 27 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Updated relay URLs: wss://relay.damus.io,wss://nostr-pub.wellorder.net,wss://nostr.mom,wss://nostr.slothy.win,wss://rela... 
+2024-08-26 01:55:37,610 27 INFO odoodb odoo.modules.registry: At least one model cache has been invalidated, signaling through the database. 
+2024-08-26 01:55:37,621 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:37] "POST /web/dataset/call_button HTTP/1.1" 200 - 47 0.015 0.932
+2024-08-26 01:55:37,737 27 WARNING odoodb odoo.modules.module: Missing `license` key in manifest for 'nostr_auth', defaulting to LGPL-3 
+2024-08-26 01:55:38,254 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:38] "GET /web HTTP/1.1" 200 - 89 0.038 0.550
+2024-08-26 01:55:39,218 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:39] "POST /web/action/load HTTP/1.1" 200 - 11 0.004 0.010
+2024-08-26 01:55:39,235 29 INFO odoodb odoo.modules.registry: Invalidating all model caches after database signaling. 
+2024-08-26 01:55:39,290 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:39] "POST /mail/init_messaging HTTP/1.1" 200 - 65 0.033 0.023
+2024-08-26 01:55:39,304 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:39] "POST /web/dataset/call_kw/res.users/systray_get_activities HTTP/1.1" 200 - 3 0.002 0.004
+2024-08-26 01:55:39,336 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:39] "GET /web/image?model=res.users&field=avatar_128&id=2 HTTP/1.1" 304 - 16 0.008 0.011
+2024-08-26 01:55:39,355 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:39] "POST /mail/load_message_failures HTTP/1.1" 200 - 11 0.005 0.007
+2024-08-26 01:55:39,366 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:39] "GET /bus/websocket_worker_bundle?v=1.0.5 HTTP/1.1" 304 - 5 0.002 0.007
+2024-08-26 01:55:39,373 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:39] "POST /web/dataset/call_kw/res.config.settings/get_views HTTP/1.1" 200 - 16 0.010 0.040
+2024-08-26 01:55:39,905 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Response status code: 200 
+2024-08-26 01:55:39,905 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: API response (first 108 items): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com', 'wss://nostr.einundzwanzig.space', 'wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.oldcity-bitcoiners.info', 'wss://nostr.massmux.com', 'wss://nostr-relay.schnitzel.world', 'wss://relay.nostr.com.au', 'wss://knostr.neutrine.com', 'wss://nostr.nodeofsven.com', 'wss://nostr.vulpem.com', 'wss://relay.farscapian.com', 'wss://relay.sovereign-stack.org', 'wss://nostr-verif.slothy.win', 'wss://relay.lexingtonbitcoin.org', 'wss://relay.plebstr.com', 'wss://relay.wellorder.net', 'wss://nostr.easydns.ca', 'wss://relay.dwadziesciajeden.pl', 'wss://e.nos.lol', 'wss://ragnar-relay.com', 'wss://nostr.data.haus', 'wss://nostr.wine', 'wss://nostr.koning-degraaf.nl', 'wss://nostr.thank.eu', 'wss://relay.hamnet.io', 'wss://nostr.sidnlabs.nl', 'wss://nostr.inosta.cc', 'wss://nostr21.com', 'wss://nostr.ch3n2k.com', 'wss://relay.nostrview.com', 'wss://relay.nostromo.social', 'wss://offchain.pub', 'wss://relay.nostr.wirednet.jp', 'wss://nostr.l00p.org', 'wss://lightningrelay.com', 'wss://bitcoinmaximalists.online', 'wss://private.red.gb.net', 'wss://relay.nostrid.com', 'wss://relay.nostrcheck.me', 'wss://nostrelay.yeghro.site', 'wss://relay.nostr.vet', 'wss://nostr.yuv.al', 'wss://nostrue.com', 'wss://nproxy.kristapsk.lv', 'wss://nostr.topeth.info', 'wss://nostr.bitcoiner.social', 'wss://relay.orange-crush.com', 'wss://nostr.spaceshell.xyz', 'wss://nostr.roundrockbitcoiners.com', 'wss://relay.nostrology.org', 'wss://nostr.bch.ninja', 'wss://nostr-dev.wellorder.net', 'wss://relay.snort.social', 'wss://nr.yay.so', 'wss://nostr.lu.ke', 'wss://atlas.nostr.land', 'wss://nostr.fmt.wiz.biz', 'wss://global-relay.cesc.trade', 'wss://nostr.pjv.me', 'wss://relay.roli.social', 'wss://brb.io', 'wss://eden.nostr.land', 'wss://nostr-verified.wellorder.net', 'wss://nostr.noones.com', 'wss://relay.nostr.nu', 'wss://nostr-relay.bitcoin.ninja', 'wss://freespeech.casa', 'wss://bitcoiner.social', 'wss://nostr.1f52b.xyz', 'wss://nostr.sebastix.dev', 'wss://nostr.cizmar.net', 'wss://n.wingu.se', 'wss://relay.nostr.hach.re', 'wss://nostr.bitcoinplebs.de', 'wss://nostr.corebreach.com', 'wss://tmp-relay.cesc.trade', 'wss://nostr.mutinywallet.com', 'wss://nostr.decentony.com', 'wss://nostr.tools.global.id', 'wss://xmr.usenostr.org', 'wss://nostr.naut.social', 'wss://at.nostrworks.com', 'wss://nostr.sovbit.host', 'wss://nostr.1sat.org', 'wss://nostr.randomdevelopment.biz', 'wss://mastodon.cloud/api/v1/streaming', 'wss://nostr.256k1.dev', 'wss://relay.beta.fogtype.com', 'wss://rsslay.ch3n2k.com', 'wss://nostr.rocketnode.space', 'wss://relay.nostr.bg', 'wss://nostr.globals.fans', 'wss://nostr.primz.org', 'wss://btc.klendazu.com', 'wss://relay.n057r.club', 'wss://slick.mjex.me', 'wss://nostr.lorentz.is', 'wss://relay.nostrified.org', 'wss://relay.primal.net', 'wss://nostr.cercatrova.me', 'wss://nostr.swiss-enigma.ch', 'wss://nostr-relay.derekross.me', 'wss://puravida.nostr.land'] 
+2024-08-26 01:55:39,905 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Number of relay links found: 108 
+2024-08-26 01:55:39,905 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Extracted relays (first 5): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com'] 
+2024-08-26 01:55:40,387 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Response status code: 200 
+2024-08-26 01:55:40,387 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: API response (first 108 items): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com', 'wss://nostr.einundzwanzig.space', 'wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.oldcity-bitcoiners.info', 'wss://nostr.massmux.com', 'wss://nostr-relay.schnitzel.world', 'wss://relay.nostr.com.au', 'wss://knostr.neutrine.com', 'wss://nostr.nodeofsven.com', 'wss://nostr.vulpem.com', 'wss://relay.farscapian.com', 'wss://relay.sovereign-stack.org', 'wss://nostr-verif.slothy.win', 'wss://relay.lexingtonbitcoin.org', 'wss://relay.plebstr.com', 'wss://relay.wellorder.net', 'wss://nostr.easydns.ca', 'wss://relay.dwadziesciajeden.pl', 'wss://e.nos.lol', 'wss://ragnar-relay.com', 'wss://nostr.data.haus', 'wss://nostr.wine', 'wss://nostr.koning-degraaf.nl', 'wss://nostr.thank.eu', 'wss://relay.hamnet.io', 'wss://nostr.sidnlabs.nl', 'wss://nostr.inosta.cc', 'wss://nostr21.com', 'wss://nostr.ch3n2k.com', 'wss://relay.nostrview.com', 'wss://relay.nostromo.social', 'wss://offchain.pub', 'wss://relay.nostr.wirednet.jp', 'wss://nostr.l00p.org', 'wss://lightningrelay.com', 'wss://bitcoinmaximalists.online', 'wss://private.red.gb.net', 'wss://relay.nostrid.com', 'wss://relay.nostrcheck.me', 'wss://nostrelay.yeghro.site', 'wss://relay.nostr.vet', 'wss://nostr.yuv.al', 'wss://nostrue.com', 'wss://nproxy.kristapsk.lv', 'wss://nostr.topeth.info', 'wss://nostr.bitcoiner.social', 'wss://relay.orange-crush.com', 'wss://nostr.spaceshell.xyz', 'wss://nostr.roundrockbitcoiners.com', 'wss://relay.nostrology.org', 'wss://nostr.bch.ninja', 'wss://nostr-dev.wellorder.net', 'wss://relay.snort.social', 'wss://nr.yay.so', 'wss://nostr.lu.ke', 'wss://atlas.nostr.land', 'wss://nostr.fmt.wiz.biz', 'wss://global-relay.cesc.trade', 'wss://nostr.pjv.me', 'wss://relay.roli.social', 'wss://brb.io', 'wss://eden.nostr.land', 'wss://nostr-verified.wellorder.net', 'wss://nostr.noones.com', 'wss://relay.nostr.nu', 'wss://nostr-relay.bitcoin.ninja', 'wss://freespeech.casa', 'wss://bitcoiner.social', 'wss://nostr.1f52b.xyz', 'wss://nostr.sebastix.dev', 'wss://nostr.cizmar.net', 'wss://n.wingu.se', 'wss://relay.nostr.hach.re', 'wss://nostr.bitcoinplebs.de', 'wss://nostr.corebreach.com', 'wss://tmp-relay.cesc.trade', 'wss://nostr.mutinywallet.com', 'wss://nostr.decentony.com', 'wss://nostr.tools.global.id', 'wss://xmr.usenostr.org', 'wss://nostr.naut.social', 'wss://at.nostrworks.com', 'wss://nostr.sovbit.host', 'wss://nostr.1sat.org', 'wss://nostr.randomdevelopment.biz', 'wss://mastodon.cloud/api/v1/streaming', 'wss://nostr.256k1.dev', 'wss://relay.beta.fogtype.com', 'wss://rsslay.ch3n2k.com', 'wss://nostr.rocketnode.space', 'wss://relay.nostr.bg', 'wss://nostr.globals.fans', 'wss://nostr.primz.org', 'wss://btc.klendazu.com', 'wss://relay.n057r.club', 'wss://slick.mjex.me', 'wss://nostr.lorentz.is', 'wss://relay.nostrified.org', 'wss://relay.primal.net', 'wss://nostr.cercatrova.me', 'wss://nostr.swiss-enigma.ch', 'wss://nostr-relay.derekross.me', 'wss://puravida.nostr.land'] 
+2024-08-26 01:55:40,387 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Number of relay links found: 108 
+2024-08-26 01:55:40,387 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Extracted relays (first 5): ['wss://relay.damus.io', 'wss://nostr-pub.wellorder.net', 'wss://nostr.mom', 'wss://nostr.slothy.win', 'wss://relay.stoner.com'] 
+2024-08-26 01:55:40,388 29 INFO odoodb odoo.addons.nostr_bridge.models.res_config_settings: Using existing relay URLs: wss://relay.damus.io,wss://nostr-pub.wellorder.net,wss://nostr.mom,wss://nostr.slothy.win,wss://rela... 
+2024-08-26 01:55:40,399 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:40] "POST /web/dataset/call_kw/res.config.settings/onchange HTTP/1.1" 200 - 39 0.010 0.950
+2024-08-26 01:55:41,214 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:41] "POST /base_setup/demo_active HTTP/1.1" 200 - 3 0.001 0.003
+2024-08-26 01:55:41,231 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:41] "POST /base_setup/data HTTP/1.1" 200 - 6 0.002 0.003
+2024-08-26 01:55:41,373 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:41] "GET /nostr_bridge/static/description/icon.png HTTP/1.1" 404 - 2 0.001 0.003
+2024-08-26 01:55:41,373 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:41] "GET /ivcs_git/static/description/icon.png HTTP/1.1" 404 - 2 0.001 0.003
+2024-08-26 01:55:50,475 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:50] "POST /web/action/load HTTP/1.1" 200 - 25 0.009 0.014
+2024-08-26 01:55:50,565 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:50] "POST /web/dataset/call_kw/res.users/get_views HTTP/1.1" 200 - 71 0.025 0.055
+2024-08-26 01:55:50,603 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:50] "POST /web/dataset/call_kw/res.users/has_group HTTP/1.1" 200 - 2 0.001 0.003
+2024-08-26 01:55:50,608 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:50] "POST /web/dataset/call_kw/res.users/web_search_read HTTP/1.1" 200 - 7 0.003 0.005
+2024-08-26 01:55:56,091 29 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 01:55:56,092 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:56] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.003
+2024-08-26 01:55:59,689 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:59] "POST /web/action/load HTTP/1.1" 200 - 10 0.003 0.008
+2024-08-26 01:55:59,758 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:59] "POST /web/dataset/call_kw/ivcs.item/get_views HTTP/1.1" 200 - 32 0.025 0.036
+2024-08-26 01:55:59,781 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:55:59] "POST /web/dataset/call_kw/ivcs.item/web_search_read HTTP/1.1" 200 - 3 0.001 0.003
+2024-08-26 01:56:01,264 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:01] "POST /web/dataset/call_kw/ivcs.item/onchange HTTP/1.1" 200 - 3 0.001 0.004
+2024-08-26 01:56:06,323 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:06] "POST /web/dataset/call_kw/ivcs.item/onchange HTTP/1.1" 200 - 1 0.000 0.005
+2024-08-26 01:56:09,255 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:09] "POST /web/dataset/call_kw/ivcs.item/create HTTP/1.1" 200 - 6 0.003 0.010
+2024-08-26 01:56:09,272 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:09] "POST /web/dataset/call_kw/ivcs.item/read HTTP/1.1" 200 - 9 0.005 0.004
+2024-08-26 01:56:10,843 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:10] "POST /web/action/load HTTP/1.1" 200 - 10 0.003 0.009
+2024-08-26 01:56:10,858 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:10] "POST /web/dataset/call_kw/ivcs.create.version.wizard/get_views HTTP/1.1" 200 - 6 0.002 0.006
+2024-08-26 01:56:10,883 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:10] "POST /web/dataset/call_kw/ivcs.create.version.wizard/onchange HTTP/1.1" 200 - 4 0.001 0.004
+2024-08-26 01:56:18,187 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:18] "POST /web/dataset/call_kw/ivcs.create.version.wizard/create HTTP/1.1" 200 - 5 0.003 0.006
+2024-08-26 01:56:18,201 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:18] "POST /web/dataset/call_kw/ivcs.create.version.wizard/read HTTP/1.1" 200 - 4 0.002 0.004
+2024-08-26 01:56:18,246 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:18] "POST /web/dataset/call_button HTTP/1.1" 200 - 12 0.006 0.031
+2024-08-26 01:56:18,264 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:18] "POST /web/dataset/call_kw/ivcs.version/get_views HTTP/1.1" 200 - 8 0.003 0.007
+2024-08-26 01:56:18,280 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:18] "POST /web/dataset/call_kw/ivcs.item/read HTTP/1.1" 200 - 6 0.002 0.005
+2024-08-26 01:56:18,285 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:18] "POST /web/dataset/call_kw/ivcs.version/read HTTP/1.1" 200 - 6 0.002 0.004
+2024-08-26 01:56:18,295 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:18] "POST /web/dataset/call_kw/ivcs.version/read HTTP/1.1" 200 - 3 0.001 0.004
+2024-08-26 01:56:19,690 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:19] "POST /web/dataset/call_kw/ivcs.item/read HTTP/1.1" 200 - 7 0.002 0.005
+2024-08-26 01:56:19,705 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:19] "POST /web/dataset/call_kw/ivcs.version/read HTTP/1.1" 200 - 3 0.001 0.003
+2024-08-26 01:56:23,731 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:23] "POST /web/dataset/call_button HTTP/1.1" 200 - 1 0.000 0.003
+2024-08-26 01:56:23,758 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:23] "POST /web/dataset/call_kw/ivcs.add.remote.wizard/get_views HTTP/1.1" 200 - 6 0.002 0.006
+2024-08-26 01:56:23,814 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:23] "POST /web/dataset/call_kw/ivcs.add.remote.wizard/onchange HTTP/1.1" 200 - 3 0.001 0.004
+2024-08-26 01:56:25,425 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:25] "POST /web/dataset/call_kw/ivcs.add.remote.wizard/create HTTP/1.1" 200 - 5 0.002 0.007
+2024-08-26 01:56:25,439 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:25] "POST /web/dataset/call_kw/ivcs.add.remote.wizard/read HTTP/1.1" 200 - 4 0.002 0.004
+2024-08-26 01:56:25,464 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:25] "POST /web/dataset/call_button HTTP/1.1" 200 - 3 0.001 0.017
+2024-08-26 01:56:27,180 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:27] "POST /web/dataset/call_kw/ivcs.item/read HTTP/1.1" 200 - 6 0.002 0.004
+2024-08-26 01:56:27,195 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:27] "POST /web/dataset/call_kw/ivcs.version/read HTTP/1.1" 200 - 3 0.001 0.003
+2024-08-26 01:56:29,134 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:29] "POST /web/dataset/call_button HTTP/1.1" 200 - 1 0.000 0.003
+2024-08-26 01:56:29,161 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:29] "POST /web/dataset/call_kw/ivcs.create.file.wizard/get_views HTTP/1.1" 200 - 6 0.003 0.009
+2024-08-26 01:56:29,181 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:29] "POST /web/dataset/call_kw/ivcs.create.file.wizard/onchange HTTP/1.1" 200 - 3 0.001 0.004
+2024-08-26 01:56:37,378 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:37] "POST /web/dataset/call_kw/ivcs.create.file.wizard/create HTTP/1.1" 200 - 4 0.003 0.009
+2024-08-26 01:56:37,391 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:37] "POST /web/dataset/call_kw/ivcs.create.file.wizard/read HTTP/1.1" 200 - 4 0.002 0.004
+2024-08-26 01:56:37,419 27 ERROR odoodb odoo.addons.ivcs_git.models.ivcs_item: Failed to create file: int() can't convert non-string with explicit base 
+2024-08-26 01:56:37,422 27 WARNING odoodb odoo.http: Failed to create file: int() can't convert non-string with explicit base 
+2024-08-26 01:56:37,422 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:37] "POST /web/dataset/call_button HTTP/1.1" 200 - 3 0.001 0.022
+2024-08-26 01:56:56,299 29 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 01:56:56,300 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:56:56] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.003
+2024-08-26 01:57:56,899 27 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 01:57:56,899 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:57:56] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.002
+2024-08-26 01:58:57,216 27 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 01:58:57,217 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:58:57] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.002
+2024-08-26 01:59:57,640 29 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 01:59:57,641 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 01:59:57] "GET /websocket HTTP/1.1" 500 - 1 0.001 0.004
+2024-08-26 02:00:57,724 29 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 02:00:57,724 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 02:00:57] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.004
+2024-08-26 02:01:57,746 29 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 02:01:57,746 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 02:01:57] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.003
+2024-08-26 02:02:57,756 29 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 02:02:57,757 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 02:02:57] "GET /websocket HTTP/1.1" 500 - 1 0.001 0.003
+2024-08-26 02:03:58,067 27 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 02:03:58,068 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 02:03:58] "GET /websocket HTTP/1.1" 500 - 1 0.001 0.005
+2024-08-26 02:04:59,113 27 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 02:04:59,114 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 02:04:59] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.003
+2024-08-26 02:06:00,128 27 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 02:06:00,128 27 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 02:06:00] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.004
+2024-08-26 02:07:01,144 29 ERROR odoodb odoo.http: Exception during request handling. 
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 818, in open_connection
+    socket = request.httprequest._HTTPRequest__environ['socket']
+KeyError: 'socket'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/odoo/odoo/odoo/http.py", line 2061, in __call__
+    response = request._serve_db()
+  File "/opt/odoo/odoo/odoo/http.py", line 1649, in _serve_db
+    return service_model.retrying(self._serve_ir_http, self.env)
+  File "/opt/odoo/odoo/odoo/service/model.py", line 133, in retrying
+    result = func()
+  File "/opt/odoo/odoo/odoo/http.py", line 1676, in _serve_ir_http
+    response = self.dispatcher.dispatch(rule.endpoint, args)
+  File "/opt/odoo/odoo/odoo/http.py", line 1790, in dispatch
+    return self.request.registry['ir.http']._dispatch(endpoint)
+  File "/opt/odoo/odoo/odoo/addons/base/models/ir_http.py", line 154, in _dispatch
+    result = endpoint(**request.params)
+  File "/opt/odoo/odoo/odoo/http.py", line 732, in route_wrapper
+    result = endpoint(self, *args, **params_ok)
+  File "/opt/odoo/odoo/addons/bus/controllers/websocket.py", line 18, in websocket
+    return WebsocketConnectionHandler.open_connection(request)
+  File "/opt/odoo/odoo/addons/bus/websocket.py", line 830, in open_connection
+    raise RuntimeError(
+RuntimeError: Couldn't bind the websocket. Is the connection opened on the evented port (8072)?
+2024-08-26 02:07:01,145 29 INFO odoodb werkzeug: 172.28.0.1 - - [26/Aug/2024 02:07:01] "GET /websocket HTTP/1.1" 500 - 1 0.000 0.004

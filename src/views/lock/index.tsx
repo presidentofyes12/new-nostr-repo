@@ -8,42 +8,73 @@ import useTranslation from "hooks/use-translation";
 import { toast } from "react-toastify";
 import { FaLockOpen } from "react-icons/fa";
 
+import { getCredentials, getKeys } from 'local-storage';
+import { storeKeys, storeCredentials } from 'local-storage';
+import { getPublicKey } from 'nostr-tools';
+import { deriveSecondGenKeys, generateCredentials } from 'hooks/keyDerivation';
+import { nip06 } from 'nostr-tools';
+//import { privateKeyFromSeedWords } from 'nostr-tools';
+import CredentialDisplayDialog from 'views/components/CredentialDisplayDialog';
+import { getUserIP } from './ip';
+
 const LockPage = (_: RouteComponentProps) => {
   const { isSm } = useMediaBreakPoint();
   const [isAccountExist, setIsAccountExist] = useState(false);
   const [isAccountLoading, setIsAccountLoading] = useState(true);
-  const [password, setPassword] = useState("");
-  const [userName, setUserName] = useState("");
-  const [enteredPassword, setEnteredPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [enteredPassword, setEnteredPassword] = useState('');
   const [t] = useTranslation();
+  const [recoveredUsername, setRecoveredUsername] = useState('');
+  const [recoveredPassword, setRecoveredPassword] = useState('');
+  const [showRecoveredCredentials, setShowRecoveredCredentials] = useState(false);
+
 
   useEffect(() => {
     const storedPassword = window.localStorage.getItem("password");
     if (storedPassword) {
       setIsAccountExist(true);
-      setPassword(storedPassword);
+      setEnteredPassword(storedPassword);
     } else {
       setIsAccountExist(false);
     }
     setIsAccountLoading(false);
   }, []);
 
-  const handleCreateAccount = () => {
-    window.localStorage.setItem("username", userName);
-    window.localStorage.setItem("password", password);
+  const handleCreateAccount = async () => {
+    const userIP = await getUserIP();
+    await storeCredentials(username, enteredPassword, userIP);
     window.localStorage.setItem("initLock", "initLock");
     setIsAccountExist(true);
+    alert("Account created successfully!");
   };
 
-  const handleLogin = () => {
-    const storedPassword = window.localStorage.getItem("password");
+  const handleLogin = async () => {
+    const storedCredentials = await getCredentials();
+    const currentIP = await getUserIP();
+    
+    if (storedCredentials) {
+      const matchedCredential = storedCredentials.find(
+        cred => cred.username === username && cred.password === enteredPassword
+      );
 
-    if (enteredPassword === storedPassword) {
-      window.localStorage.setItem("auth", "true");
-      window.location.href = "/home";
+      if (matchedCredential) {
+        if (matchedCredential.ip === currentIP) {
+          const keys = await getKeys();
+          if (keys) {
+            localStorage.setItem("auth", "true");
+            localStorage.removeItem('isLocked');
+            window.location.href = "/home";
+          } else {
+            alert("Error: Keys not found. Please reset your account.");
+          }
+        } else {
+          alert("Unauthorized device. Please use the device you created your account with.");
+        }
+      } else {
+        alert("Invalid username or password. Please try again.");
+      }
     } else {
-      // Username or password is incorrect
-      toast("Invalid username or password. Please try again.");
+      alert("No stored credentials found. Please create an account first.");
     }
   };
 
@@ -62,6 +93,27 @@ const LockPage = (_: RouteComponentProps) => {
       window.location.href="/login"
     }
   };
+
+  const handleRecovery = async (firstGenMnemonic: string) => {
+    try {
+      const firstGenPrivateKey = nip06.privateKeyFromSeedWords(firstGenMnemonic);
+      const secondGen = deriveSecondGenKeys(firstGenPrivateKey);
+      const credentials = generateCredentials(secondGen.privateKey);
+      
+      await storeKeys({ pub: getPublicKey(secondGen.privateKey), priv: secondGen.privateKey });
+      
+      const userIP = await getUserIP();
+      await storeCredentials(credentials.username, credentials.password, userIP);
+      
+      setRecoveredUsername(credentials.username);
+      setRecoveredPassword(credentials.password);
+      setShowRecoveredCredentials(true);
+    } catch (error) {
+      console.error('Error in handleRecovery:', error);
+      toast("Failed to recover account. Please try again.");
+    }
+  };
+  
   return (
     <>
       <Helmet>
@@ -74,6 +126,12 @@ const LockPage = (_: RouteComponentProps) => {
               <h4 className="text-center">UnLock Screen</h4>
               <div>
                 <div>
+                  <input
+                    type="text"
+                    placeholder="Enter username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
                   <input
                     type="password"
                     placeholder="Enter password"
@@ -95,6 +153,12 @@ const LockPage = (_: RouteComponentProps) => {
                   >
                     Account Reset by Nsec{" "}
                   </button>
+                  <button
+                    onClick={(e) => handleRecovery("rifle sure pitch cause camera burden iron stairs riot idea ankle argue")}
+                    className=" btn btn_success"
+                  >
+                    Credentials Test{" "}
+                  </button>
                 </div>
               </div>
             </>
@@ -108,15 +172,15 @@ const LockPage = (_: RouteComponentProps) => {
                       className="form-control"
                       type="text"
                       placeholder="Enter username"
-                      value={userName}
-                      onChange={(e) => setUserName(e.target.value)}
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                     />
                     <input
                       className="form-control"
                       type="password"
                       placeholder="Enter password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={enteredPassword}
+                      onChange={(e) => setEnteredPassword(e.target.value)}
                     />
                     <button
                       className="btn btn_success mt-3 mr-3"
@@ -150,6 +214,12 @@ const LockPage = (_: RouteComponentProps) => {
           )}
         </Card>
       </Box>
+    <CredentialDisplayDialog
+      open={showRecoveredCredentials}
+      onClose={() => setShowRecoveredCredentials(false)}
+      username={recoveredUsername}
+      password={recoveredPassword}
+    />
     </>
   );
 };
