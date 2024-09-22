@@ -1,13 +1,9 @@
-# File: odoo_custom_addons/nostr_bridge/models/nostr_event_manager.py
-
 from odoo import models, fields, api
 import json
 import time
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-import git
-import os
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -18,20 +14,10 @@ class NostrEventManager(models.AbstractModel):
 
     @api.model
     def create_event(self, content, tags, private_key):
-        pubkey = self.get_public_key(private_key)
-        created_at = int(time.time())
-        event_data = {
-            "kind": 3120,
-            "pubkey": pubkey,
-            "created_at": created_at,
-            "tags": tags,
-            "content": json.dumps(content)
-        }
-        event_id = self.calculate_event_id(event_data)
-        event_data["id"] = event_id
-        event_data["sig"] = self.sign_event(event_data, private_key)
-        _logger.info(event_data)
-        return event_data
+        private_key_obj = PrivateKey.from_nsec(private_key)
+        event = Event(kind=1, content=content, tags=tags)
+        private_key_obj.sign_event(event)
+        return event.to_json()
 
     @api.model
     def get_public_key(self, private_key):
@@ -74,32 +60,55 @@ class NostrEventManager(models.AbstractModel):
         repo = git.Repo(repo_path)
         commit = repo.commit(commit_hash)
         
-        content = {
+        content = json.dumps({
             "action": "commit",
             "message": commit.message,
             "author": commit.author.name,
             "email": commit.author.email,
             "date": commit.authored_datetime.isoformat()
-        }
+        })
         
         tags = [
             ["t", "commit"],
             ["h", commit_hash],
             ["n", repo.active_branch.name],
             ["m", commit.author.name],
-            ["v", "1.0"],  # You might want to implement versioning
+            ["v", "1.0"],
             ["r", repo.remotes.origin.url if repo.remotes else ""],
-            ["p", self.get_public_key(self.env.user.nostr_private_key)],
+            ["p", self.env.user.nostr_public_key],
             ["d", commit.message],
             ["s", "success"]
         ]
         
-        return self.create_event(content, tags, self.env.user.nostr_private_key)
+        event = self.create_event(content, tags, self.env.user.nostr_private_key)
+        self.publish_event(event)
+        return event
+
+    def sync_with_decentralized_manager(self, event):
+        sync_managers = self.env['decentralized.sync.manager'].search([])
+        for manager in sync_managers:
+            program = self.env['decentralized.sync.program'].search([
+                ('manager_id', '=', manager.id),
+                ('content', '=', event['content'])
+            ], limit=1)
+
+            if not program:
+                program = self.env['decentralized.sync.program'].create({
+                    'manager_id': manager.id,
+                    'creator_id': self.env['decentralized.sync.creator'].search([], limit=1).id,
+                    'content': event['content'],
+                    'version': 1,
+                    'size': 0.5  # Arbitrary size
+                })
+
+            manager.propagate_update(program)
 
     @api.model
     def publish_event(self, event):
-        nostr_adapter = self.env['nostr.adapter']
-        return nostr_adapter.publish_event(event)
+        sync_managers = self.env['decentralized.sync.manager'].search([])
+        for manager in sync_managers:
+            manager.publish_event(event['content'], event['tags'])
+        return True
 
     @api.model
     def get_events(self, filters=None):
